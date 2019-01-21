@@ -6,19 +6,17 @@ class Byte_util
 {
 public:
 
-	static bool nibble_to_hex(uint8_t n, char* const c)
+	static constexpr char nibble_to_hex(const uint8_t n)
 	{
-		if(n > 15)
-		{
-			return false;
-		}
-
-		*c = nibble_hex_lut[n];
-
-		return true;
+		return nibble_hex_lut[ get_n0(n) ];
 	}
 
-	static void u8_to_hex(uint8_t n, char c[2])
+	static void nibble_to_hex(const uint8_t n, char* c)
+	{
+		*c = nibble_to_hex(n);
+	}
+
+	static void u8_to_hex(const uint8_t n, char c[2])
 	{
 		c[0] = nibble_hex_lut[ get_n1(n) ];
 		c[1] = nibble_hex_lut[ get_n0(n) ];
@@ -106,6 +104,6 @@ public:
 
 protected:
 
-	constexpr static char nibble_hex_lut[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+	static constexpr char nibble_hex_lut[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
 };
