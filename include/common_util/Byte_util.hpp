@@ -6,6 +6,42 @@ class Byte_util
 {
 public:
 
+	static constexpr bool hex_to_nibble(const char c, uint8_t* const n)
+	{
+		if( (c >= '0') && (c <= '9') )
+		{
+			*n = c - '0';
+		}
+		else if( (c >= 'A') && (c <= 'F') )
+		{
+			*n = c - 'A';
+		}
+		else
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	static constexpr bool hex_to_byte(const char c[2], uint8_t* const n)
+	{
+		uint8_t n1 = 0;
+		uint8_t n0 = 0;
+		if(!hex_to_nibble(c[0], &n1))
+		{
+			return false;
+		}
+		if(!hex_to_nibble(c[1], &n0))
+		{
+			return false;
+		}
+
+		*n = (n1 << 4) | (n0 << 0);
+
+		return true;
+	}
+
 	static constexpr char nibble_to_hex(const uint8_t n)
 	{
 		return nibble_hex_lut[ get_n0(n) ];
