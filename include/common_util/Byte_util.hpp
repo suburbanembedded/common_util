@@ -14,7 +14,7 @@ public:
 		}
 		else if( (c >= 'A') && (c <= 'F') )
 		{
-			*n = c - 'A';
+			*n = (c - 'A') + 10;
 		}
 		else
 		{
@@ -136,6 +136,20 @@ public:
 	static constexpr uint8_t get_b7(const uint64_t x)
 	{
 		return uint32_t(x >> 56) & 0x000000FF;
+	}
+
+	static constexpr uint16_t make_u16(const uint8_t b1, const uint8_t b0)
+	{
+		return (uint16_t(b1) <<  8) |
+			   (uint16_t(b0) <<  0);
+	}
+
+	static constexpr uint32_t make_u32(const uint8_t b3, const uint8_t b2, const uint8_t b1, const uint8_t b0)
+	{
+		return (uint32_t(b3) << 24) | 
+			   (uint32_t(b2) << 16) |
+			   (uint32_t(b1) <<  8) |
+			   (uint32_t(b0) <<  0);
 	}
 
 protected:
