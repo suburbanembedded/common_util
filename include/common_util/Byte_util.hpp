@@ -152,6 +152,41 @@ public:
 			   (uint32_t(b0) <<  0);
 	}
 
+	static constexpr uint64_t make_u64(const uint8_t b7, const uint8_t b6, const uint8_t b5, const uint8_t b4, const uint8_t b3, const uint8_t b2, const uint8_t b1, const uint8_t b0)
+	{
+		return (uint64_t(make_u32(b7, b6, b5, b4)) << 32) | (uint64_t(make_u32(b3, b2, b1, b0)) << 0);
+	}
+
+	static constexpr uint8_t get_upper_half(const uint16_t x)
+	{
+		return uint8_t(x >> 8);
+	}
+
+	static constexpr uint8_t get_lower_half(const uint16_t x)
+	{
+		return uint8_t(x & 0x00FF);
+	}
+
+	static constexpr uint16_t get_upper_half(const uint32_t x)
+	{
+		return uint16_t(x >> 16);
+	}
+
+	static constexpr uint16_t get_lower_half(const uint32_t x)
+	{
+		return uint16_t(x & 0x0000FFFF);
+	}
+
+	static constexpr uint32_t get_upper_half(const uint64_t x)
+	{
+		return uint32_t(x >> 32);
+	}
+
+	static constexpr uint32_t get_lower_half(const uint64_t x)
+	{
+		return uint32_t(x & 0x00000000FFFFFFFF);
+	}
+
 protected:
 
 	static constexpr char nibble_hex_lut[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
