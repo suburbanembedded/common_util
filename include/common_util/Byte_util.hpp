@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <cstdint>
 
 class Byte_util
@@ -42,6 +43,25 @@ public:
 		return true;
 	}
 
+	static constexpr bool hex_to_u16(const char c[4], uint16_t* const n)
+	{
+		uint8_t b1 = 0;
+		if(!hex_to_byte(c, &b1))
+		{
+			return false;
+		}
+
+		uint8_t b0 = 0;
+		if(!hex_to_byte(c+2, &b0))
+		{
+			return false;
+		}
+		
+		*n = (uint16_t(b1) << 8) | (uint16_t(b0) << 0);
+
+		return true;
+	}
+
 	static constexpr char nibble_to_hex(const uint8_t n)
 	{
 		return nibble_hex_lut[ get_n0(n) ];
@@ -56,6 +76,13 @@ public:
 	{
 		c[0] = nibble_hex_lut[ get_n1(n) ];
 		c[1] = nibble_hex_lut[ get_n0(n) ];
+	}
+
+	static void u8_to_hex_str(const uint8_t n, std::array<char, 3>* const str)
+	{
+		(*str)[0] = nibble_hex_lut[ get_n1(n) ];
+		(*str)[1] = nibble_hex_lut[ get_n0(n) ];
+		(*str)[2] = '\0';
 	}
 
 	static constexpr uint8_t get_n0(const uint8_t x)
@@ -142,6 +169,12 @@ public:
 	{
 		return (uint16_t(b1) <<  8) |
 			   (uint16_t(b0) <<  0);
+	}
+
+	static constexpr uint32_t make_u32(const uint16_t h1, const uint16_t h0)
+	{
+		return (uint32_t(h1) << 16) |
+			   (uint32_t(h0) <<  0);
 	}
 
 	static constexpr uint32_t make_u32(const uint8_t b3, const uint8_t b2, const uint8_t b1, const uint8_t b0)
