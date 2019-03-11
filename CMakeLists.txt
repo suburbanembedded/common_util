@@ -1,6 +1,7 @@
 add_library(common_util
 
 	src/Byte_util.cpp
+	src/Insertion_sort.cpp
 )
 
 
