@@ -220,6 +220,14 @@ public:
 		return uint32_t(x & 0x00000000FFFFFFFF);
 	}
 
+	///
+	/// (val << pos) & mask
+	///
+	static constexpr uint32_t rmw_mask(const uint32_t initial, const uint32_t val, const uint8_t pos, const uint32_t mask)
+	{
+		return (initial & (~mask)) | ((val << pos) & mask);
+	}
+
 protected:
 
 	static constexpr char nibble_hex_lut[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
