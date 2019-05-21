@@ -174,22 +174,16 @@ public:
 
 	static constexpr uint8_t bv_8(const uint8_t x)
 	{
-		static_assert(x < 8);
-
 		return 1U << x;
 	}
 
 	static constexpr uint16_t bv_16(const uint8_t x)
 	{
-		static_assert(x < 16);
-		
 		return 1U << x;
 	}
 
 	static constexpr uint32_t bv_32(const uint8_t x)
 	{
-		static_assert(x < 32);
-		
 		return 1U << x;
 	}
 
