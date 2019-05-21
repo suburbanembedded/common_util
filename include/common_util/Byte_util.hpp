@@ -172,6 +172,27 @@ public:
 		return uint32_t(x >> 56) & 0x000000FF;
 	}
 
+	static constexpr uint8_t bv_8(const uint8_t x)
+	{
+		static_assert(x < 8);
+
+		return 1U << x;
+	}
+
+	static constexpr uint16_t bv_16(const uint8_t x)
+	{
+		static_assert(x < 16);
+		
+		return 1U << x;
+	}
+
+	static constexpr uint32_t bv_32(const uint8_t x)
+	{
+		static_assert(x < 32);
+		
+		return 1U << x;
+	}
+
 	static constexpr uint16_t make_u16(const uint8_t b1, const uint8_t b0)
 	{
 		return (uint16_t(b1) <<  8) |

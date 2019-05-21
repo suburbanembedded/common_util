@@ -15,6 +15,11 @@
 template<class Iter, class Comp>
 void insertion_sort(Iter begin, Iter end, Comp comp_lt)
 {
+	if(begin == end)
+	{
+		return;
+	}
+
 	Iter i = begin;
 	++i;
 	for(; i != end; ++i)
