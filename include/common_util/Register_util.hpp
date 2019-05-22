@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include <cstdint>
-
 class Register_util
 {
 public:
