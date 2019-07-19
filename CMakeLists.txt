@@ -3,6 +3,11 @@ add_library(common_util
 	src/Byte_util.cpp
 	src/Insertion_sort.cpp
 	src/Register_util.cpp
+
+	src/Intrusive_list.cpp
+	src/Intrusive_slist.cpp
+	src/Non_copyable.cpp
+
 )
 
 target_include_directories(common_util PUBLIC
@@ -13,6 +18,8 @@ if(${BUILD_COMMON_UTIL_TESTS})
 	add_library(common_util_tests
 		tests/Byte_util_tests.cpp
 		tests/Insertion_sort_tests.cpp
+		tests/Test_Intrusive_list.cpp
+		tests/Test_Intrusive_slist.cpp
 	)
 	
 	target_link_libraries(common_util_tests
