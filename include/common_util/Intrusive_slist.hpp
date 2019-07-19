@@ -154,8 +154,21 @@ public:
 
 	bool erase(Intrusive_slist_node* const node)
 	{
+		if(empty())
+		{
+			return false;
+		}
+
 		Intrusive_slist_node* prev = nullptr;
 		Intrusive_slist_node* curr = m_head;
+		Intrusive_slist_node* next = curr->m_next;
+
+		if(node == m_head)
+		{
+			curr->m_next == nullptr;	
+			m_head = next;
+			return true;
+		}
 
 		while(curr)
 		{
@@ -163,7 +176,7 @@ public:
 			{
 				if(prev)
 				{
-					prev->m_next = curr->m_next;
+					prev->m_next = next;
 				}
 
 				node->m_next = nullptr;
@@ -172,6 +185,7 @@ public:
 
 			prev = curr;
 			curr = curr->m_next;
+			next = curr->m_next;
 		}
 
 		return false;

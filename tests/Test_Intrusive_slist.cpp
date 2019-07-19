@@ -51,7 +51,7 @@ namespace
 		ASSERT_EQ(slist.front<Intrusive_slist_node>(), &(node_storage.back()));
 	}
 
-	TEST(Intrusive_slist, slist_erase_first)
+	TEST(Intrusive_slist, slist_erase_last)
 	{
 		std::vector<Intrusive_slist_node> node_storage;
 		node_storage.resize(3);
@@ -95,7 +95,7 @@ namespace
 		ASSERT_EQ(front->next<Intrusive_slist_node>(), &(node_storage[0]));
 	}
 
-	TEST(Intrusive_slist, slist_erase_last)
+	TEST(Intrusive_slist, slist_erase_first)
 	{
 		std::vector<Intrusive_slist_node> node_storage;
 		node_storage.resize(3);
@@ -115,5 +115,32 @@ namespace
 		auto front = slist.front<Intrusive_slist_node>();
 		ASSERT_EQ(front, &(node_storage[1]));
 		ASSERT_EQ(front->next<Intrusive_slist_node>(), &(node_storage[0]));
+	}
+
+	TEST(Intrusive_slist, pop_front)
+	{
+		std::vector<Intrusive_slist_node> node_storage;
+		node_storage.resize(3);
+
+		Intrusive_slist slist;
+		for(size_t i = 0; i < node_storage.size(); i++)
+		{
+			slist.push_front(&(node_storage[i]));
+		}
+
+		ASSERT_EQ(slist.size(), 3);
+		ASSERT_EQ(slist.front<Intrusive_slist_node>(), &(node_storage[2]));
+
+		slist.pop_front();
+		ASSERT_EQ(slist.size(), 2);
+		ASSERT_EQ(slist.front<Intrusive_slist_node>(), &(node_storage[1]));
+
+		slist.pop_front();
+		ASSERT_EQ(slist.size(), 1);
+		ASSERT_EQ(slist.front<Intrusive_slist_node>(), &(node_storage[0]));
+
+		slist.pop_front();
+		ASSERT_EQ(slist.size(), 0);
+		ASSERT_EQ(slist.front<Intrusive_slist_node>(), nullptr);
 	}
 }
