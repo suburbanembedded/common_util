@@ -165,7 +165,7 @@ public:
 
 		if(node == m_head)
 		{
-			curr->m_next == nullptr;	
+			curr->m_next = nullptr;	
 			m_head = next;
 			return true;
 		}
