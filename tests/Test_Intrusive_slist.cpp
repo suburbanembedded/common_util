@@ -48,7 +48,15 @@ namespace
 			ASSERT_EQ(slist.size(), i+1);
 		}
 
+		ASSERT_FALSE(slist.empty());
 		ASSERT_EQ(slist.front<Intrusive_slist_node>(), &(node_storage.back()));
+
+		auto node = slist.front<Intrusive_slist_node>();
+		for(size_t i = 0; i < node_storage.size(); i++)
+		{
+			ASSERT_EQ(node, &(node_storage[node_storage.size() - 1 - i]));
+			node = node->next();
+		}
 	}
 
 	TEST(Intrusive_slist, slist_erase_last)
