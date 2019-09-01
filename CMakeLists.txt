@@ -1,13 +1,13 @@
 add_library(common_util
 
 	src/Byte_util.cpp
+	src/Comparison_util.cpp
 	src/Insertion_sort.cpp
 	src/Register_util.cpp
 
 	src/Intrusive_list.cpp
 	src/Intrusive_slist.cpp
 	src/Non_copyable.cpp
-
 )
 
 target_include_directories(common_util PUBLIC
