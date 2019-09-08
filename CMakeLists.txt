@@ -8,6 +8,9 @@ add_library(common_util
 	src/Intrusive_list.cpp
 	src/Intrusive_slist.cpp
 	src/Non_copyable.cpp
+
+	src/Stack_string_base.cpp
+	src/Stack_string.cpp
 )
 
 target_include_directories(common_util PUBLIC
