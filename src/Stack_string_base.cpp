@@ -7,7 +7,7 @@
 
 #include "common_util/Stack_string_base.hpp"
 
-Stack_string_base& Stack_string_base::append(Stack_string_base& str)
+Stack_string_base& Stack_string_base::append(const Stack_string_base& str)
 {
 	append(str.data(), str.size());
 
@@ -62,7 +62,7 @@ Stack_string_base& Stack_string_base::append(size_t n, const char c)
 	return *this;
 }
 
-Stack_string_base& Stack_string_base::assign(Stack_string_base& str)
+Stack_string_base& Stack_string_base::assign(const Stack_string_base& str)
 {
 	clear();
 	return append(str);

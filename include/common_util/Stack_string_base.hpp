@@ -87,12 +87,12 @@ public:
 		return m_len == 0;
 	}
 
-	char operator[](int idx)
+	char& operator[](int idx)
 	{
 		return m_str[idx];
 	}
 
-	const char operator[](int idx) const
+	const char& operator[](int idx) const
 	{
 		return m_str[idx];
 	}
@@ -136,7 +136,7 @@ public:
 		}
 	}
 
-	Stack_string_base& append(Stack_string_base& str);
+	Stack_string_base& append(const Stack_string_base& str);
 	Stack_string_base& append(const char* str);
 	Stack_string_base& append(const char* str, size_t n);
 	Stack_string_base& append(size_t n, const char c);
@@ -153,7 +153,7 @@ public:
 		return *this;
 	}
 
-	Stack_string_base& assign(Stack_string_base& str);
+	Stack_string_base& assign(const Stack_string_base& str);
 	Stack_string_base& assign(const char* str);
 	Stack_string_base& assign(const char* str, size_t n);
 	Stack_string_base& assign(size_t n, const char c);
