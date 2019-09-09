@@ -8,6 +8,7 @@
 #pragma once
 
 #include <algorithm>
+#include <iterator>
 
 #include <cstddef>
 #include <cstring>
@@ -18,7 +19,9 @@ public:
 
 	Stack_string_base()
 	{
-		clear();
+		m_str = nullptr;
+		m_len = 0;
+		m_max = 0;
 	}
 
 	virtual ~Stack_string_base()
@@ -49,7 +52,7 @@ public:
 		}
 		else if(count > size())
 		{
-			count = std::min(count, capacity() - size());
+			count = std::min(count, free_space());
 			std::fill_n(m_str + m_len, count - size(), char());
 			m_len += count;
 			m_str[m_len] = 0;
@@ -65,6 +68,12 @@ public:
 	size_t capacity() const
 	{
 		return m_max - 1;
+	}
+
+	//how many chars can be inserted
+	size_t free_space() const
+	{
+		return capacity() - size();
 	}
 
 	//includes trailing null
@@ -114,12 +123,13 @@ public:
 		{
 			m_str[m_len] = c;
 			m_len++;
+			m_str[m_len] = 0;
 		}
 	}
 	
 	void pop_back()
 	{
-		if(m_len < 1)
+		if(!empty())
 		{
 			m_len--;
 			m_str[m_len] = 0;
@@ -134,10 +144,11 @@ public:
 	template<class Iter>
 	Stack_string_base& append(Iter first, Iter last)
 	{
-		const size_t num_to_copy = std::min(std::distance(first, last), capacity() - size());
+		const size_t num_to_copy = std::min<size_t>(std::distance(first, last), free_space());
 
 		std::copy_n(first, num_to_copy, m_str + m_len);
 		m_len += num_to_copy;
+		m_str[m_len] = 0;
 
 		return *this;
 	}

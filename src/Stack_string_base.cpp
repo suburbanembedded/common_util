@@ -15,22 +15,33 @@ Stack_string_base& Stack_string_base::append(Stack_string_base& str)
 }
 Stack_string_base& Stack_string_base::append(const char* str)
 {
-	if(str)
+	if(!str)
 	{
-		const size_t num_to_copy = strlen(str);
-		append(str, num_to_copy);
+		return *this;
 	}
+
+	const size_t str_len = strlen(str);
+	const size_t num_to_copy = std::min(str_len, free_space());
+		
+	std::copy_n(str, num_to_copy, m_str + m_len);
+	m_len += num_to_copy;
+	m_str[m_len] = 0;
 
 	return *this;
 }
 
 Stack_string_base& Stack_string_base::append(const char* str, size_t n)
 {
-	const size_t num_to_copy = std::min(n, capacity() - size());
+	if(!str)
+	{
+		return *this;
+	}
+
+	const size_t str_len = strlen(str);
+	const size_t num_to_copy = std::min(str_len, std::min(n, free_space()));
 
 	std::copy_n(str, num_to_copy, m_str + m_len);
 	m_len += num_to_copy;
-
 	m_str[m_len] = 0;
 
 	return *this;
@@ -38,7 +49,7 @@ Stack_string_base& Stack_string_base::append(const char* str, size_t n)
 
 Stack_string_base& Stack_string_base::append(size_t n, const char c)
 {
-	const size_t num_to_copy = std::min(n, capacity() - size());
+	const size_t num_to_copy = std::min(n, free_space());
 
 	for(size_t i = 0; i < num_to_copy; i++)
 	{
