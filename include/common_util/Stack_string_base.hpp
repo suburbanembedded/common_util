@@ -24,7 +24,7 @@ public:
 		m_max = 0;
 	}
 
-	virtual ~Stack_string_base()
+	~Stack_string_base()
 	{
 
 	}
@@ -45,16 +45,18 @@ public:
 
 	void resize(size_t count)
 	{
-		if(count < size())
+		const size_t new_size = std::min(count, max_size()-1);
+
+		if(new_size < size())
 		{
-			m_len = count;
+			m_len = new_size;
 			m_str[m_len] = 0;
 		}
-		else if(count > size())
+		else if(new_size > size())
 		{
-			count = std::min(count, free_space());
-			std::fill_n(m_str + m_len, count - size(), char());
-			m_len += count;
+			const size_t num_to_copy = std::min(new_size, free_space());
+			std::fill_n(m_str + m_len, num_to_copy, char());
+			m_len = new_size;
 			m_str[m_len] = 0;
 		}
 	}

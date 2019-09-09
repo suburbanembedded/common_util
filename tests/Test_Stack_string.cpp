@@ -47,6 +47,60 @@ namespace
 		EXPECT_EQ(str.size(), 0);
 	}
 
+	TEST(Stack_string, resize_shrink)
+	{
+		Stack_string<8> str;
+		str.append("abcdefgh");
+		str.resize(4);
+		EXPECT_EQ(str.size(), 4);
+		EXPECT_STREQ(str.c_str(), "abcd");
+	}
+
+	TEST(Stack_string, resize_nop)
+	{
+		Stack_string<8> str;
+		str.append("abcdef");
+		str.resize(6);
+		EXPECT_EQ(str.size(), 6);
+		EXPECT_STREQ(str.c_str(), "abcdef");
+	}
+
+	TEST(Stack_string, resize_grow)
+	{
+		{
+			Stack_string<8> str;
+			str.resize(4);
+			EXPECT_EQ(str.size(), 4);
+			EXPECT_EQ(str[0], 0);
+			EXPECT_EQ(str[1], 0);
+			EXPECT_EQ(str[2], 0);
+			EXPECT_EQ(str[3], 0);
+
+			str.resize(12);
+			EXPECT_EQ(str.size(), 8);
+			EXPECT_EQ(str[0], 0);
+			EXPECT_EQ(str[1], 0);
+			EXPECT_EQ(str[2], 0);
+			EXPECT_EQ(str[3], 0);
+			EXPECT_EQ(str[4], 0);
+			EXPECT_EQ(str[5], 0);
+			EXPECT_EQ(str[6], 0);
+			EXPECT_EQ(str[7], 0);
+		}
+
+		{
+
+			Stack_string<8> str;
+			str.append("abcd");
+			
+			str.resize(6);
+			EXPECT_EQ(str.size(), 6);
+			EXPECT_STREQ(str.c_str(), "abcd");
+			EXPECT_EQ(str[5], 0);
+			EXPECT_EQ(str[6], 0);
+		}
+	}
+
 	TEST(Stack_string, push_back)
 	{
 		Stack_string<4> str;
@@ -255,5 +309,4 @@ namespace
 			EXPECT_STREQ(str_a.c_str(), "ab");
 		}
 	}
-
 }
