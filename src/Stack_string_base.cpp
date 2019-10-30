@@ -7,6 +7,9 @@
 
 #include "common_util/Stack_string_base.hpp"
 
+#include <cstdarg>
+#include <cstdio>
+
 Stack_string_base& Stack_string_base::append(const Stack_string_base& str)
 {
 	append(str.data(), str.size());
@@ -81,4 +84,36 @@ Stack_string_base& Stack_string_base::assign(size_t n, const char c)
 {
 	clear();
 	return append(n, c);
+}
+
+int Stack_string_base::sprintf(const char *format, ...)
+{
+
+	//next open spot
+	char* const buf_start = (&back()) + 1;
+
+	//we already account for the null in capacity()
+	const size_t char_len = free_space();
+	const size_t buf_len = char_len + 1;
+
+	va_list args;
+	va_start(args, format);
+	int ret = vsnprintf(buf_start, buf_len, format, args);
+	va_end(args);
+
+	if(ret < 0)
+	{
+		return ret;
+	}
+
+	if(ret <= char_len)
+	{
+		m_len += ret;
+	}
+	else
+	{
+		m_len += char_len;
+	}
+
+	return ret;
 }

@@ -309,4 +309,62 @@ namespace
 			EXPECT_STREQ(str_a.c_str(), "ab");
 		}
 	}
+
+	TEST(Stack_string, sprintf)
+	{
+		Stack_string<4> str_a;
+		int ret = str_a.sprintf("%s", "abcd");
+
+		EXPECT_EQ(ret, 4);
+		EXPECT_EQ(str_a.size(), 4);
+		EXPECT_STREQ(str_a.c_str(), "abcd");
+	}
+
+	TEST(Stack_string, sprintf_overrun)
+	{
+		Stack_string<4> str_a;
+		int ret = str_a.sprintf("%s", "abcde");
+
+		EXPECT_EQ(ret, 5);
+		EXPECT_EQ(str_a.size(), 4);
+		EXPECT_STREQ(str_a.c_str(), "abcd");
+	}
+
+	TEST(Stack_string, sprintf_append)
+	{
+		Stack_string<4> str_a;
+		str_a.append("a");
+
+		int ret = str_a.sprintf("%s", "b");
+		EXPECT_EQ(ret, 1);
+
+		ret = str_a.sprintf("%s", "c");
+		EXPECT_EQ(ret, 1);
+
+		ret = str_a.sprintf("%s", "d");
+		EXPECT_EQ(ret, 1);
+
+		ret = str_a.sprintf("%s", "e");
+		EXPECT_EQ(ret, 1);
+
+		EXPECT_EQ(str_a.size(), 4);
+		EXPECT_STREQ(str_a.c_str(), "abcd");	
+	}
+
+	TEST(Stack_string, sprintf_format_len)
+	{
+		Stack_string<4> str_a;
+		int ret = str_a.sprintf("%s", "abcde");
+		
+		EXPECT_EQ(ret, 5);
+		EXPECT_EQ(str_a.size(), 4);
+		EXPECT_STREQ(str_a.c_str(), "abcd");	
+	}
+
+	TEST(Stack_string, sprintf_error)
+	{
+		Stack_string<4> str_a;
+		int ret = str_a.sprintf("%");
+		EXPECT_LT(ret, 0);
+	}
 }

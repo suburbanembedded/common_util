@@ -167,6 +167,8 @@ public:
 		return append(first, last);
 	}
 
+	int sprintf(const char *format, ...);
+
 	const char* c_str() const
 	{
 		return m_str;
