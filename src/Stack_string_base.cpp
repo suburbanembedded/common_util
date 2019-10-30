@@ -106,7 +106,7 @@ int Stack_string_base::sprintf(const char *format, ...)
 		return ret;
 	}
 
-	if(ret <= char_len)
+	if(size_t(ret) <= char_len)
 	{
 		m_len += ret;
 	}
