@@ -19,25 +19,25 @@ target_include_directories(common_util PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-add_library(gtest SHARED
-	/usr/src/googletest/googletest/src/gtest-all.cc
-)
-
-target_include_directories(gtest PUBLIC
-	/usr/src/googletest/googletest/include
-	/usr/src/googletest/googletest/
-)
-
-add_library(gmock SHARED
-	/usr/src/googletest/googlemock/src/gmock-all.cc
-)
-
-target_include_directories(gmock PUBLIC
-	/usr/src/googletest/googlemock/include
-	/usr/src/googletest/googlemock/
-)
-
 if(${BUILD_TESTS})
+
+	add_library(gtest SHARED
+		/usr/src/googletest/googletest/src/gtest-all.cc
+	)
+
+	target_include_directories(gtest PUBLIC
+		/usr/src/googletest/googletest/include
+		/usr/src/googletest/googletest/
+	)
+
+	add_library(gmock SHARED
+		/usr/src/googletest/googlemock/src/gmock-all.cc
+	)
+
+	target_include_directories(gmock PUBLIC
+		/usr/src/googletest/googlemock/include
+		/usr/src/googletest/googlemock/
+	)
 
 	set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 	set(THREADS_PREFER_PTHREAD_FLAG TRUE)
