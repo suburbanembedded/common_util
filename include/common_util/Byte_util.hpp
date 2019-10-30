@@ -87,9 +87,22 @@ public:
 
 	static void u8_to_hex_str(const uint8_t n, std::array<char, 3>* const str)
 	{
-		(*str)[0] = nibble_hex_lut[ get_n1(n) ];
-		(*str)[1] = nibble_hex_lut[ get_n0(n) ];
-		(*str)[2] = '\0';
+		u8_to_hex(n, str->data());
+		str->back() = '\0';
+	}
+
+	static void u32_to_hex(const uint32_t n, char c[8])
+	{
+		u8_to_hex(Byte_util::get_b3(n), c + 0);
+		u8_to_hex(Byte_util::get_b2(n), c + 2);
+		u8_to_hex(Byte_util::get_b1(n), c + 4);
+		u8_to_hex(Byte_util::get_b0(n), c + 6);
+	}
+
+	static void u32_to_hex_str(const uint32_t n, std::array<char, 8>* const str)
+	{
+		u32_to_hex(n, str->data());
+		str->back() = '\0';
 	}
 
 	static constexpr uint8_t get_n0(const uint8_t x)
@@ -207,9 +220,15 @@ public:
 			   (uint32_t(b0) <<  0);
 	}
 
+	static constexpr uint64_t make_u64(const uint32_t h1, const uint32_t h0)
+	{
+		return (uint64_t(h1) << 32) |
+			   (uint64_t(h0) <<  0);
+	}
+
 	static constexpr uint64_t make_u64(const uint8_t b7, const uint8_t b6, const uint8_t b5, const uint8_t b4, const uint8_t b3, const uint8_t b2, const uint8_t b1, const uint8_t b0)
 	{
-		return (uint64_t(make_u32(b7, b6, b5, b4)) << 32) | (uint64_t(make_u32(b3, b2, b1, b0)) << 0);
+		return make_u64(make_u32(b7, b6, b5, b4), make_u32(b3, b2, b1, b0));
 	}
 
 	static constexpr uint8_t get_upper_half(const uint16_t x)
