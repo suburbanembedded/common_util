@@ -24,7 +24,7 @@ public:
 		m_max = 0;
 	}
 
-	~Stack_string_base()
+	virtual ~Stack_string_base()
 	{
 
 	}
@@ -87,6 +87,11 @@ public:
 	bool empty() const
 	{
 		return m_len == 0;
+	}
+
+	bool full() const
+	{
+		return m_len == capacity();
 	}
 
 	char& operator[](int idx)
@@ -167,6 +172,7 @@ public:
 		return append(first, last);
 	}
 
+	//appends to back
 	int sprintf(const char *format, ...);
 
 	const char* c_str() const
