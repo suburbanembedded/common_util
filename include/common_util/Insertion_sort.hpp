@@ -11,7 +11,6 @@
 #include <iterator>
 #include <utility>
 
-
 template<class Iter, class Comp>
 void insertion_sort(Iter begin, Iter end, Comp comp_lt)
 {
