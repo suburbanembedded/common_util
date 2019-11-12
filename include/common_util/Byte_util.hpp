@@ -269,6 +269,48 @@ public:
 		return (initial & (~mask)) | ((val << pos) & mask);
 	}
 
+	static constexpr uint8_t mask_rshift(const uint8_t val, const uint8_t mask, const uint8_t rshift)
+	{
+		return (val & mask) << rshift;
+	}
+
+	static constexpr uint16_t mask_rshift(const uint16_t val, const uint16_t mask, const uint8_t rshift)
+	{
+		return (val & mask) << rshift;
+	}
+
+	static constexpr uint32_t mask_rshift(const uint32_t val, const uint32_t mask, const uint8_t rshift)
+	{
+		return (val & mask) << rshift;
+	}
+
+	template <typename T, typename U>
+	static constexpr T mask_rshift(const U& val, const T mask, const uint8_t rshift)
+	{
+		return mask_rshift(T(val), mask, rshift);
+	}
+
+	static constexpr uint8_t mask_lshift(const uint8_t val, const uint8_t mask, const uint8_t lshift)
+	{
+		return (val & mask) >> lshift;
+	}
+
+	static constexpr uint16_t mask_lshift(const uint16_t val, const uint16_t mask, const uint8_t lshift)
+	{
+		return (val & mask) >> lshift;
+	}
+
+	static constexpr uint32_t mask_lshift(const uint32_t val, const uint32_t mask, const uint8_t lshift)
+	{
+		return (val & mask) >> lshift;
+	}
+
+	template <typename T, typename U>
+	static constexpr T mask_lshift(const U& val, const T mask, const uint8_t lshift)
+	{
+		return mask_lshift(T(val), mask, lshift);
+	}
+
 protected:
 
 	static constexpr char nibble_hex_lut[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
