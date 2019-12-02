@@ -200,6 +200,21 @@ public:
 		return 1U << x;
 	}
 
+	static constexpr uint8_t set_bv_8(uint8_t w, bool set, const uint8_t x)
+	{
+		return (set) ? (w | (1U << x)) : (w & ~(1U << x));
+	}
+
+	static constexpr uint16_t set_bv_16(uint16_t w, bool set, const uint8_t x)
+	{
+		return (set) ? (w | (1U << x)) : (w & ~(1U << x));
+	}
+
+	static constexpr uint32_t set_bv_32(uint32_t w, bool set, const uint8_t x)
+	{
+		return (set) ? (w | (1U << x)) : (w & ~(1U << x));
+	}
+
 	static constexpr uint16_t make_u16(const uint8_t b1, const uint8_t b0)
 	{
 		return (uint16_t(b1) <<  8) |
