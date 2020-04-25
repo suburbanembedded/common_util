@@ -7,13 +7,15 @@
 
 #pragma once
 
+#include "common_util/Non_copyable.hpp"
+
 #include <algorithm>
 #include <iterator>
 
 #include <cstddef>
 #include <cstring>
 
-class Stack_string_base
+class Stack_string_base : private Non_copyable
 {
 public:
 
