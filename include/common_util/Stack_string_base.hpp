@@ -34,7 +34,7 @@ public:
 	void set_buffer(char* const buf, const size_t max)
 	{
 		m_str = buf;
-		if(m_str)
+		if(m_str && (max > 0))
 		{
 			m_str[0] = 0;
 		}
