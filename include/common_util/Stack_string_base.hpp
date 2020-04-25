@@ -32,7 +32,10 @@ public:
 	void set_buffer(char* const buf, const size_t max)
 	{
 		m_str = buf;
-		m_str[0] = 0;
+		if(m_str)
+		{
+			m_str[0] = 0;
+		}
 		m_len = 0;
 		m_max = max;
 	}
