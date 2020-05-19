@@ -105,6 +105,16 @@ public:
 		str->back() = '\0';
 	}
 
+	static constexpr ascii_to_upper(const char c)
+	{
+		return c & ~(0x20);
+	}
+
+	static constexpr ascii_to_lower(const char c)
+	{
+		return c | 0x20;
+	}
+
 	static constexpr uint8_t get_n0(const uint8_t x)
 	{
 		return (x >> 0) & 0x0F;
