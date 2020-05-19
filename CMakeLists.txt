@@ -70,3 +70,10 @@ if(${BUILD_TESTS})
 		-Wl,--whole-archive common_util_tests -Wl,--no-whole-archive
 	)
 endif()
+
+if(DEFINED Doxygen::doxygen)
+	doxygen_add_docs(common_util_docs
+		include/
+		src/
+	)
+endif()
