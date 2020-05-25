@@ -105,12 +105,12 @@ public:
 		str->back() = '\0';
 	}
 
-	static constexpr ascii_to_upper(const char c)
+	static constexpr char ascii_to_upper(const char c)
 	{
 		return c & ~(0x20);
 	}
 
-	static constexpr ascii_to_lower(const char c)
+	static constexpr char ascii_to_lower(const char c)
 	{
 		return c | 0x20;
 	}
@@ -210,6 +210,11 @@ public:
 		return 1U << x;
 	}
 
+	static constexpr uint64_t bv_64(const uint8_t x)
+	{
+		return 1U << x;
+	}
+
 	static constexpr uint8_t set_bv_8(uint8_t w, bool set, const uint8_t x)
 	{
 		return (set) ? (w | (1U << x)) : (w & ~(1U << x));
@@ -221,6 +226,11 @@ public:
 	}
 
 	static constexpr uint32_t set_bv_32(uint32_t w, bool set, const uint8_t x)
+	{
+		return (set) ? (w | (1U << x)) : (w & ~(1U << x));
+	}
+
+	static constexpr uint64_t set_bv_64(uint32_t w, bool set, const uint8_t x)
 	{
 		return (set) ? (w | (1U << x)) : (w & ~(1U << x));
 	}
