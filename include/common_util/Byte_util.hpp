@@ -99,6 +99,18 @@ public:
 		u8_to_hex(Byte_util::get_b0(n), c + 6);
 	}
 
+	static void u64_to_hex(const uint32_t n, char c[16])
+	{
+		u8_to_hex(Byte_util::get_b7(n), c + 0);
+		u8_to_hex(Byte_util::get_b6(n), c + 2);
+		u8_to_hex(Byte_util::get_b5(n), c + 4);
+		u8_to_hex(Byte_util::get_b4(n), c + 6);
+		u8_to_hex(Byte_util::get_b3(n), c + 8);
+		u8_to_hex(Byte_util::get_b2(n), c + 10);
+		u8_to_hex(Byte_util::get_b1(n), c + 12);
+		u8_to_hex(Byte_util::get_b0(n), c + 14);
+	}
+
 	static void u32_to_hex_str(const uint32_t n, std::array<char, 8>* const str)
 	{
 		u32_to_hex(n, str->data());
