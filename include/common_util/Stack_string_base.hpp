@@ -19,6 +19,125 @@ class Stack_string_base : private Non_copyable
 {
 public:
 
+	template<typename T>
+	class iterator_base
+	{
+	public:
+		using iterator_category = std::random_access_iterator_tag;
+		using value_type = T;
+		using difference_type = std::ptrdiff_t;
+		using pointer = T*;
+		using reference = T&;
+
+		iterator_base() : m_ptr(nullptr)
+		{
+			
+		}
+
+		iterator_base(pointer ptr) : m_ptr(ptr)
+		{
+			
+		}
+
+		//pointer ops
+		reference operator*() const 
+		{
+			return *m_ptr;
+		}
+		const value_type* operator->()  const 
+		{
+			return m_ptr;
+		}
+		reference operator[](difference_type offset) const
+		{
+			return m_ptr[offset];
+		}
+
+		//inc & dec
+		iterator_base& operator++()
+		{
+			++m_ptr;
+			return *this;
+		}
+		iterator_base operator++(int)     
+		{
+			pointer tmp = m_ptr;
+			++*this;
+			return iterator_base(tmp);			
+		}
+		iterator_base& operator--()
+		{
+			--m_ptr;
+			return *this;
+		}
+		iterator_base operator--(int)
+		{
+			pointer tmp = m_ptr;
+			--*this;
+			return iterator_base(tmp);
+		}
+
+		//pointer math
+		iterator_base& operator+=(difference_type offset)
+		{
+			m_ptr += offset;
+			return *this;
+		}
+		iterator_base operator+(difference_type offset) const
+		{
+			return iterator_base(m_ptr + offset);
+		}
+		friend iterator_base operator+(difference_type offset, const iterator_base& rhs)
+		{
+			return iterator_base(offset + rhs.m_ptr);
+		}
+		iterator_base& operator-= (difference_type offset)
+		{
+			m_ptr -= offset;
+			return *this;
+		}
+		iterator_base operator- (difference_type offset) const
+		{
+			return iterator_base(m_ptr - offset);
+		}
+		difference_type operator-(const iterator_base& rhs) const
+		{
+			return m_ptr - rhs.m_ptr;
+		}
+
+		//comparison
+		bool operator== (const iterator_base& rhs)  const
+		{
+			return m_ptr == rhs.m_ptr;
+		}
+		bool operator!= (const iterator_base& rhs)  const
+		{
+			return m_ptr != rhs.m_ptr;
+		}
+		bool operator<  (const iterator_base& rhs)  const
+		{
+			return m_ptr < rhs.m_ptr;
+		}
+		bool operator<= (const iterator_base& rhs)  const
+		{
+			return m_ptr <= rhs.m_ptr;
+		}
+		bool operator>  (const iterator_base& rhs)  const
+		{
+			return m_ptr > rhs.m_ptr;
+		}
+		bool operator>= (const iterator_base& rhs)  const
+		{
+			return m_ptr >= rhs.m_ptr;
+		}
+	
+	protected:
+		pointer m_ptr;
+	};
+
+	typedef iterator_base<char> iterator_type;
+	typedef iterator_base<const char> const_iterator_type;
+
 	Stack_string_base()
 	{
 		m_str = nullptr;
@@ -29,6 +148,24 @@ public:
 	virtual ~Stack_string_base()
 	{
 
+	}
+
+	iterator_type begin()
+	{
+		return iterator_type(m_str);
+	}
+	iterator_type end()
+	{
+		return iterator_type(m_str + size());
+	}
+
+	const_iterator_type cbegin() const
+	{
+		return const_iterator_type(m_str);
+	}
+	const_iterator_type cend() const
+	{
+		return const_iterator_type(m_str + size());
 	}
 
 	void set_buffer(char* const buf, const size_t max)

@@ -11,6 +11,7 @@
 
 #include <cstddef>
 #include <type_traits>
+#include <iterator>
 
 //A minimal intrusive singly linked list for OS use
 //Not recommended for general use, since this does not manage memory or have many features
@@ -77,6 +78,69 @@ class Intrusive_slist : private Non_copyable
 {
 public:
 
+template<typename T>
+	class iterator_base
+	{
+	public:
+		using iterator_category = std::forward_iterator_tag;
+		using value_type = T;
+		using difference_type = std::ptrdiff_t;
+		using pointer = T*;
+		using reference = T&;
+
+		iterator_base() : m_ptr(nullptr)
+		{
+			
+		}
+
+		iterator_base(pointer ptr) : m_ptr(ptr)
+		{
+			
+		}
+
+		//pointer ops
+		reference operator*() const 
+		{
+			return *m_ptr;
+		}
+		const value_type* operator->()  const 
+		{
+			return m_ptr;
+		}
+
+		//inc & dec
+		iterator_base& operator++()
+		{
+			if(m_ptr)
+			{
+				m_ptr = m_ptr->next();
+			}
+			return *this;
+		}
+		iterator_base operator++(int)     
+		{
+			pointer tmp = m_ptr;
+			++*this;
+			return iterator_base(tmp);			
+		}
+
+		//comparison
+		bool operator== (const iterator_base& rhs)  const
+		{
+			return m_ptr == rhs.m_ptr;
+		}
+		bool operator!= (const iterator_base& rhs)  const
+		{
+			return m_ptr != rhs.m_ptr;
+		}
+
+	protected:
+		pointer m_ptr;
+	};
+
+	typedef iterator_base<Intrusive_slist_node> iterator_type;
+	typedef iterator_base<const Intrusive_slist_node> const_iterator_type;
+
 	Intrusive_slist()
 	{
 		m_head = nullptr;
@@ -94,6 +158,24 @@ public:
 	{
 		m_head = rhs.m_head;
 		rhs.m_head = nullptr;
+	}
+
+	iterator_type begin()
+	{
+		return iterator_type(m_head);
+	}
+	iterator_type end()
+	{
+		return iterator_type(nullptr);
+	}
+
+	const_iterator_type cbegin() const
+	{
+		return const_iterator_type(m_head);
+	}
+	const_iterator_type cend() const
+	{
+		return const_iterator_type(nullptr);
 	}
 
 	template<typename T>
