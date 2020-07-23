@@ -75,14 +75,15 @@ jobs:
         name: common_util-release
     - name: Unpack common_util
       run: tar -xf $GITHUB_WORKSPACE/common_util-release-*.tar.gz
-    - name: ls
-      run: ls -la
     - name: Install common_util
       run: sudo apt-get install ./common_util-0.1.0-Linux.deb
-    - name: ls
-      run: ls -la /usr/bin
     - name: Run unit tests
-      run: /usr/bin/common_util_test_runner_linux
+      run: /usr/bin/common_util_test_runner_linux --gtest_output=xml
+    - name: Upload test results
+      uses: actions/upload-artifact@v2
+      with:
+        name: common_util-release-test_detail
+        path: ${{ github.workspace }}/test_detail.xml
 
   release:
 
