@@ -79,6 +79,8 @@ jobs:
       run: ls -la
     - name: Install common_util
       run: sudo apt-get install ./common_util-0.1.0-Linux.deb
+    - name: ls
+      run: ls -la /usr/bin
     - name: Run unit tests
       run: /usr/bin/common_util_test_runner_linux
 
