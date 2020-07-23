@@ -70,7 +70,7 @@ jobs:
 
     steps:
     - name: Get installer
-      uses: actions/upload-artifact@v2
+      uses: actions/download-artifact@v2
       with:
         name: common_util-release
     - name: Unpack common_util
