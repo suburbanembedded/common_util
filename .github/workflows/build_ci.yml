@@ -60,6 +60,9 @@ jobs:
         name: hadoucan-fw-release
         path: ${{ github.workspace }}/common_util-release-${{ github.sha }}.tar.gz
 
+    - name: Run unit tests
+      run: ./build/debug/common_util_test_runner_linux
+
   release:
 
     runs-on: ubuntu-18.04
