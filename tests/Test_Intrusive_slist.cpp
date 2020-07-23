@@ -59,7 +59,7 @@ namespace
 		}
 	}
 
-	TEST(Intrusive_slist, slist_erase_last)
+	TEST(Intrusive_slist, erase_last)
 	{
 		std::vector<Intrusive_slist_node> node_storage;
 		node_storage.resize(3);
@@ -81,7 +81,7 @@ namespace
 		ASSERT_EQ(front->next<Intrusive_slist_node>(), &(node_storage[1]));
 	}
 
-	TEST(Intrusive_slist, slist_erase_middle)
+	TEST(Intrusive_slist, erase_middle)
 	{
 		std::vector<Intrusive_slist_node> node_storage;
 		node_storage.resize(3);
@@ -103,7 +103,7 @@ namespace
 		ASSERT_EQ(front->next<Intrusive_slist_node>(), &(node_storage[0]));
 	}
 
-	TEST(Intrusive_slist, slist_erase_first)
+	TEST(Intrusive_slist, erase_first)
 	{
 		std::vector<Intrusive_slist_node> node_storage;
 		node_storage.resize(3);
