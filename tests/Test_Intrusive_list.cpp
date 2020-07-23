@@ -130,70 +130,124 @@ namespace
 		}
 	}
 
-	TEST(Intrusive_list, list_erase_last)
+	TEST(Intrusive_list, erase_last)
 	{
 		std::vector<Intrusive_list_node> node_storage;
 		node_storage.resize(3);
 
-		Intrusive_list slist;
+		Intrusive_list list;
 		for(size_t i = 0; i < node_storage.size(); i++)
 		{
-			slist.push_front(&(node_storage[i]));
+			list.push_front(&(node_storage[i]));
 		}
 
-		ASSERT_EQ(slist.size(), 3);
+		ASSERT_EQ(list.size(), 3);
 
-		slist.erase(&(node_storage[0]));
+		list.erase(&(node_storage[0]));
 
-		ASSERT_EQ(slist.size(), 2);
+		ASSERT_EQ(list.size(), 2);
 
-		auto front = slist.front<Intrusive_list_node>();
+		auto front = list.front<Intrusive_list_node>();
 		ASSERT_EQ(front, &(node_storage[2]));
 		ASSERT_EQ(front->next<Intrusive_list_node>(), &(node_storage[1]));
 	}
 
-	TEST(Intrusive_list, list_erase_middle)
+	TEST(Intrusive_list, erase_middle)
 	{
 		std::vector<Intrusive_list_node> node_storage;
 		node_storage.resize(3);
 
-		Intrusive_list slist;
+		Intrusive_list list;
 		for(size_t i = 0; i < node_storage.size(); i++)
 		{
-			slist.push_front(&(node_storage[i]));
+			list.push_front(&(node_storage[i]));
 		}
 
-		ASSERT_EQ(slist.size(), 3);
+		ASSERT_EQ(list.size(), 3);
 
-		slist.erase(&(node_storage[1]));
+		list.erase(&(node_storage[1]));
 
-		ASSERT_EQ(slist.size(), 2);
+		ASSERT_EQ(list.size(), 2);
 
-		auto front = slist.front<Intrusive_list_node>();
+		auto front = list.front<Intrusive_list_node>();
 		ASSERT_EQ(front, &(node_storage[2]));
 		ASSERT_EQ(front->next<Intrusive_list_node>(), &(node_storage[0]));
 	}
 
-	TEST(Intrusive_list, list_erase_first)
+	TEST(Intrusive_list, erase_first)
 	{
 		std::vector<Intrusive_list_node> node_storage;
 		node_storage.resize(3);
 
-		Intrusive_list slist;
+		Intrusive_list list;
 		for(size_t i = 0; i < node_storage.size(); i++)
 		{
-			slist.push_front(&(node_storage[i]));
+			list.push_front(&(node_storage[i]));
 		}
 
-		ASSERT_EQ(slist.size(), 3);
+		ASSERT_EQ(list.size(), 3);
 
-		slist.erase(&(node_storage[2]));
+		list.erase(&(node_storage[2]));
 
-		ASSERT_EQ(slist.size(), 2);
+		ASSERT_EQ(list.size(), 2);
 
-		auto front = slist.front<Intrusive_list_node>();
+		auto front = list.front<Intrusive_list_node>();
 		ASSERT_EQ(front, &(node_storage[1]));
 		ASSERT_EQ(front->next<Intrusive_list_node>(), &(node_storage[0]));
+	}
+
+	TEST(Intrusive_list, pop_front)
+	{
+		std::vector<Intrusive_list_node> node_storage;
+		node_storage.resize(3);
+
+		Intrusive_list list;
+		for(size_t i = 0; i < node_storage.size(); i++)
+		{
+			list.push_front(&(node_storage[i]));
+		}
+
+		ASSERT_EQ(list.size(), 3);
+		ASSERT_EQ(list.front<Intrusive_list_node>(), &(node_storage[2]));
+
+		list.pop_front();
+		ASSERT_EQ(list.size(), 2);
+		ASSERT_EQ(list.front<Intrusive_list_node>(), &(node_storage[1]));
+
+		list.pop_front();
+		ASSERT_EQ(list.size(), 1);
+		ASSERT_EQ(list.front<Intrusive_list_node>(), &(node_storage[0]));
+
+		list.pop_front();
+		ASSERT_EQ(list.size(), 0);
+		ASSERT_EQ(list.front<Intrusive_list_node>(), nullptr);
+	}
+
+	TEST(Intrusive_list, pop_back)
+	{
+		std::vector<Intrusive_list_node> node_storage;
+		node_storage.resize(3);
+
+		Intrusive_list list;
+		for(size_t i = 0; i < node_storage.size(); i++)
+		{
+			list.push_front(&(node_storage[i]));
+		}
+
+		ASSERT_EQ(list.size(), 3);
+		ASSERT_EQ(list.back<Intrusive_list_node>(), &(node_storage[0]));
+
+		list.pop_back();
+		ASSERT_EQ(list.size(), 2);
+		ASSERT_EQ(list.back<Intrusive_list_node>(), &(node_storage[1]));
+
+		list.pop_back();
+		ASSERT_EQ(list.size(), 1);
+		ASSERT_EQ(list.back<Intrusive_list_node>(), &(node_storage[2]));
+
+		list.pop_back();
+		ASSERT_EQ(list.size(), 0);
+		ASSERT_EQ(list.front<Intrusive_list_node>(), nullptr);
 	}
 
 	TEST(Intrusive_list, swap_0_1)

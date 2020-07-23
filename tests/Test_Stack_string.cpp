@@ -367,4 +367,70 @@ namespace
 		int ret = str_a.sprintf("%");
 		EXPECT_LT(ret, 0);
 	}
+
+	TEST(Stack_string, iterator)
+	{
+		Stack_string<16> str_a;
+		str_a.append("abcde");
+
+		Stack_string_base::iterator_type itr = str_a.begin();
+
+		size_t i = 0;
+		while(itr != str_a.end())
+		{
+			ASSERT_EQ(*itr, str_a.data()[i]);
+			itr++;
+			i++;
+		}
+	}
+
+	TEST(Stack_string, iterator_range_for)
+	{
+		Stack_string<16> str_a;
+		str_a.append("abcde");
+
+		size_t i = 0;
+		for(const auto& c : str_a)
+		{
+			ASSERT_EQ(c, str_a.data()[i]);
+			i++;
+		}
+	}
+
+	TEST(Stack_string, const_iterator)
+	{
+		Stack_string<16> str_a;
+		str_a.append("abcde");
+
+		Stack_string_base::const_iterator_type itr = str_a.cbegin();
+
+		size_t i = 0;
+		while(itr != str_a.cend())
+		{
+			ASSERT_EQ(*itr, str_a.data()[i]);
+			itr++;
+			i++;
+		}
+	}
+
+	TEST(Stack_string, iterator_math)
+	{
+		Stack_string<16> str_a;
+		str_a.append("abcde");
+
+		EXPECT_EQ(5, std::distance(str_a.begin(), str_a.end()));
+		EXPECT_EQ(5, std::distance(str_a.cbegin(), str_a.cend()));
+
+		EXPECT_EQ('a', *(str_a.begin()++));
+		EXPECT_EQ('b', *(++str_a.begin()));
+		EXPECT_EQ('c', *(str_a.begin() + 2));
+		EXPECT_EQ('b', *((str_a.begin() + 2) - 1));
+
+		EXPECT_EQ('\0', *(str_a.end()--));
+		EXPECT_EQ('e', *(--str_a.end()));
+		EXPECT_EQ('d', *((str_a.end() - 3) + 1));
+
+		EXPECT_EQ('b', *(std::next(str_a.begin())));
+		EXPECT_EQ('e', *(std::prev(str_a.end())));
+	}
 }
