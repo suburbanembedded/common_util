@@ -51,15 +51,27 @@ jobs:
     - name: Upload debug artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: hadoucan-fw-debug
+        name: common_util-debug
         path: ${{ github.workspace }}/common_util-debug-${{ github.sha }}.tar.gz
 
     - name: Upload release artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: hadoucan-fw-release
+        name: common_util-release
         path: ${{ github.workspace }}/common_util-release-${{ github.sha }}.tar.gz
 
+  run_tests:
+    needs: build
+    - name: Get installer
+      uses: actions/upload-artifact@v2
+      with:
+        name: common_util-release
+    - name: Unpack common_util
+      run: tar -xf $GITHUB_WORKSPACE/common_util-release-*.tar.gz
+    - name: ls
+      run: ls -la
+    - name: Install common_util
+      run: apt-get install ./common_util-0.1.0-Linux.deb
     - name: Run unit tests
       run: ./build/debug/common_util_test_runner_linux
 

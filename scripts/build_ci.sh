@@ -12,11 +12,11 @@ docker exec -u $(id -u):$(id -g) -w /tmp/workspace/ $CONTAINER_ID make package -
 docker stop $CONTAINER_ID
 
 pushd $GITHUB_WORKSPACE/build/debug/
-sha256sum -b libcommon_util.a common_util-0.1.0-Linux.deb | tee sha256.txt
-tar -czf $GITHUB_WORKSPACE/common_util-debug-$GITHUB_SHA.tar.gz    libcommon_util.a common_util-0.1.0-Linux.deb sha256.txt
+sha256sum -b common_util-0.1.0-Linux.deb | tee sha256.txt
+tar -czf $GITHUB_WORKSPACE/common_util-debug-$GITHUB_SHA.tar.gz    common_util-0.1.0-Linux.deb sha256.txt
 popd
 
 pushd $GITHUB_WORKSPACE/build/release/
-sha256sum -b libcommon_util.a common_util-0.1.0-Linux.deb | tee sha256.txt
-tar -czf $GITHUB_WORKSPACE/common_util-release-$GITHUB_SHA.tar.gz  libcommon_util.a common_util-0.1.0-Linux.deb sha256.txt
+sha256sum -b common_util-0.1.0-Linux.deb | tee sha256.txt
+tar -czf $GITHUB_WORKSPACE/common_util-release-$GITHUB_SHA.tar.gz  common_util-0.1.0-Linux.deb sha256.txt
 popd
