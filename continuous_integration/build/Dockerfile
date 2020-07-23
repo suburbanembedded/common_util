@@ -1,8 +1,17 @@
 FROM ubuntu:18.04
 
-RUN apt-get update && apt-get install -y wget rsync
+RUN apt-get update && apt-get install -y \
+	rsync \ 
+	wget
 
-RUN apt-get update && apt-get install -y build-essential git cmake doxygen graphviz mscgen
+RUN apt-get update && apt-get install -y \
+	build-essential \ 
+	cmake           \ 
+	doxygen         \
+	git             \ 
+	googletest      \ 
+	graphviz        \ 
+	mscgen
 
 RUN groupadd buildbot && useradd --no-log-init --create-home --home-dir /home/buildbot -g buildbot buildbot
 
