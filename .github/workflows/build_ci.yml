@@ -16,10 +16,10 @@ env:
 jobs:
   build:
 
-    if: github.event_name == 'push' || github.event_name == 'pull_request'
-
     runs-on: ubuntu-18.04
     timeout-minutes: 30
+    
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
 
     steps:
     - name: clone
@@ -61,7 +61,14 @@ jobs:
         path: ${{ github.workspace }}/common_util-release-${{ github.sha }}.tar.gz
 
   run_tests:
+
+    runs-on: ubuntu-18.04
+    timeout-minutes: 30
+    
     needs: build
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+
+    steps:
     - name: Get installer
       uses: actions/upload-artifact@v2
       with:
@@ -81,7 +88,6 @@ jobs:
     timeout-minutes: 30
     
     needs: build
-
     if: github.event_name == 'create' && github.event.ref_type == 'tag'
     
     steps:
