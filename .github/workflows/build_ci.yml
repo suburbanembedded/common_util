@@ -80,7 +80,7 @@ jobs:
     - name: Install common_util
       run: sudo apt-get install ./common_util-0.1.0-Linux.deb
     - name: Run unit tests
-      run: ./build/debug/common_util_test_runner_linux
+      run: /usr/bin/common_util_test_runner_linux
 
   release:
 
