@@ -6,7 +6,7 @@ if [ -d build ]; then rm -rf build; fi
 
 BASE_PATH=$PWD
 
-CMAKE_OPTS="-DBUILD_TESTS=OFF"
+CMAKE_OPTS="-DBUILD_TESTS=ON"
 
 mkdir -p build/release
 pushd build/release
