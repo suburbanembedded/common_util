@@ -141,10 +141,7 @@ public:
 		//inc & dec
 		iterator_base& operator++()
 		{
-			if(m_ptr)
-			{
-				m_ptr = m_ptr->next();
-			}
+			m_ptr = m_ptr->next();
 			return *this;
 		}
 		iterator_base operator++(int)     
@@ -155,10 +152,7 @@ public:
 		}
 		iterator_base& operator--()
 		{
-			if(m_ptr)
-			{
-				m_ptr = m_ptr->prev();
-			}
+			m_ptr = m_ptr->prev();
 			return *this;
 		}
 		iterator_base operator--(int)
@@ -187,8 +181,8 @@ public:
 
 	Intrusive_list()
 	{
-		m_head = nullptr;
-		m_tail = nullptr;
+		m_sentinel.m_prev = &m_sentinel;
+		m_sentinel.m_next = &m_sentinel;
 	}
 
 	~Intrusive_list() = default;
@@ -201,28 +195,33 @@ public:
 	//permit move
 	Intrusive_list(Intrusive_list&& rhs)
 	{
-		m_head = rhs.m_head;
-		m_tail = rhs.m_tail;
-		rhs.m_head = nullptr;
-		rhs.m_tail = nullptr;
+		m_sentinel.m_prev = rhs.m_sentinel.m_prev;
+		m_sentinel.m_next = rhs.m_sentinel.m_next;
+		rhs.m_sentinel.m_prev = &rhs.m_sentinel;
+		rhs.m_sentinel.m_next = &rhs.m_sentinel;
 	}
 
 	iterator_type begin()
 	{
-		return iterator_type(m_head);
+		return iterator_type(m_sentinel.m_next);
 	}
 	iterator_type end()
 	{
-		return iterator_type(nullptr);
+		return iterator_type(&m_sentinel);
 	}
 
 	const_iterator_type cbegin() const
 	{
-		return const_iterator_type(m_head);
+		return const_iterator_type(m_sentinel.m_next);
 	}
 	const_iterator_type cend() const
 	{
-		return const_iterator_type(nullptr);
+		return const_iterator_type(&m_sentinel);
+	}
+
+	Intrusive_list_node const * const get_sentinel() const
+	{
+		return &m_sentinel;
 	}
 
 	template<typename T>
@@ -230,7 +229,12 @@ public:
 	{
 		static_assert(std::is_base_of<Intrusive_list_node, T>::value);
 
-		return static_cast<T*>(m_head);
+		if(empty())
+		{
+			return nullptr;
+		}
+
+		return static_cast<T*>(m_sentinel.m_next);
 	}
 
 	template<typename T>
@@ -238,7 +242,12 @@ public:
 	{
 		static_assert(std::is_base_of<Intrusive_list_node, T>::value);
 
-		return static_cast<const T*>(m_head);
+		if(empty())
+		{
+			return nullptr;
+		}
+
+		return static_cast<const T*>(m_sentinel.m_next);
 	}
 
 	template<typename T>
@@ -246,7 +255,12 @@ public:
 	{
 		static_assert(std::is_base_of<Intrusive_list_node, T>::value);
 
-		return static_cast<T*>(m_tail);
+		if(empty())
+		{
+			return nullptr;
+		}
+
+		return static_cast<T*>(m_sentinel.m_prev);
 	}
 
 	template<typename T>
@@ -254,19 +268,24 @@ public:
 	{
 		static_assert(std::is_base_of<Intrusive_list_node, T>::value);
 
-		return static_cast<const T*>(m_tail);
+		if(empty())
+		{
+			return nullptr;
+		}
+
+		return static_cast<const T*>(m_sentinel.m_prev);
 	}
 
 	bool empty() const
 	{
-		return m_head == nullptr;
+		return m_sentinel.m_next == &m_sentinel;
 	}
 
 	size_t size() const
 	{
 		size_t count = 0;
-		Intrusive_list_node const * n = m_head;
-		while(n)
+		Intrusive_list_node const * n = m_sentinel.m_next;
+		while(n != &m_sentinel)
 		{
 			count++;
 			n = n->m_next;
@@ -277,77 +296,154 @@ public:
 
 	void push_front(Intrusive_list_node* const node)
 	{
-		if(m_head)
-		{
-			node->m_next = m_head;
-			node->m_prev = nullptr;
-
-			m_head->m_prev = node;
-			m_head = node;
-		}
-		else
-		{
-			node->m_next = nullptr;
-			node->m_prev = nullptr;
-
-			m_head = node;
-			m_tail = node;
-		}	
+		m_sentinel.m_next->m_prev = node;
+		node->m_next = m_sentinel.m_next;
+		node->m_prev = &m_sentinel;
+		m_sentinel.m_next = node;
 	}
 
 	void push_back(Intrusive_list_node* const node)
 	{
-		if(m_tail)
-		{
-			node->m_next = nullptr;
-			node->m_prev = m_tail;
-
-			m_tail->m_next = node;
-			m_tail = node;
-		}
-		else
-		{
-			node->m_next = nullptr;
-			node->m_prev = nullptr;
-
-			m_head = node;
-			m_tail = node;
-		}	
+		m_sentinel.m_prev->m_next = node;
+		node->m_prev = m_sentinel.m_prev;
+		node->m_next = &m_sentinel;
+		m_sentinel.m_prev = node;
 	}
 
 	void pop_front()
 	{
-		if(m_head)
-		{
-			if(m_head == m_tail)
-			{
-				m_head = nullptr;
-				m_tail = nullptr;
-			}
-			else
-			{
-				m_head = m_head->m_next;
-			}
-		}
+		m_sentinel.m_next = m_sentinel.m_next->m_next;
+		m_sentinel.m_next->m_prev = &m_sentinel;
 	}
 
 	void pop_back()
 	{
-		if(m_tail)
+		m_sentinel.m_prev = m_sentinel.m_prev->m_prev;
+		m_sentinel.m_prev->m_next = &m_sentinel;
+	}
+
+	static bool is_node_adj(Intrusive_list_node* const a, Intrusive_list_node* const b)
+	{
+		const bool ret = (a->m_next == b) || (a->m_prev == b) || (b->m_next == a) || (b->m_prev == a);
+		return ret;
+	}
+
+	static bool is_a_left_b(Intrusive_list_node* const a, Intrusive_list_node* const b)
+	{
+		const bool ret = (a->m_next == b);
+		return ret;
+	}
+
+	static bool is_a_right_b(Intrusive_list_node* const a, Intrusive_list_node* const b)
+	{
+		const bool ret = (a->m_prev == b);
+		return ret;
+	}
+
+	bool erase(Intrusive_list_node* const node)
+	{
+		if(empty())
 		{
-			if(m_head == m_tail)
+			return false;
+		}
+
+		Intrusive_list_node* curr = m_sentinel.m_next;
+
+		while(curr != &m_sentinel)
+		{
+			if(curr == node)
 			{
-				m_head = nullptr;
-				m_tail = nullptr;
+				unlink(curr);
+				return true;
 			}
-			else
-			{
-				m_tail = m_tail->m_prev;
-			}
+
+			curr = curr->m_next;
+		}
+
+		return false;
+	}
+
+	void swap(Intrusive_list_node* const a, Intrusive_list_node* const b)
+	{
+		if(a == b)
+		{
+			return;
+		}
+
+		if(is_a_left_b(a, b))
+		{
+			Intrusive_list_node* lhs = a;
+			Intrusive_list_node* rhs = b;
+
+			swap_adjacent(lhs, rhs);
+		}
+		else if(is_a_right_b(a, b))
+		{
+			Intrusive_list_node* lhs = b;
+			Intrusive_list_node* rhs = a;
+
+			swap_adjacent(lhs, rhs);
+		}
+		else
+		{
+			Intrusive_list_node* const a_prev = a->m_prev;
+			Intrusive_list_node* const a_next = a->m_next;
+
+			Intrusive_list_node* const b_prev = b->m_prev;
+			Intrusive_list_node* const b_next = b->m_next;
+
+			a_prev->m_next = b;
+			a_next->m_prev = b;
+
+			b_prev->m_next = a;
+			b_next->m_prev = a;
+			
+			b->m_prev = a_prev;
+			b->m_next = a_next;
+			
+			a->m_prev = b_prev;
+			a->m_next = b_next;
 		}
 	}
 
 protected:
-	Intrusive_list_node* m_head;
-	Intrusive_list_node* m_tail;
+
+	void swap_adjacent(Intrusive_list_node* const lhs, Intrusive_list_node* const rhs)
+	{
+		Intrusive_list_node* const lhs_prev = lhs->m_prev;
+		Intrusive_list_node* const rhs_next = rhs->m_next;
+
+		lhs->m_prev = rhs;
+		lhs->m_next = rhs_next;
+
+		rhs->m_prev = lhs_prev;
+		rhs->m_next = lhs;
+
+		lhs_prev->m_next = rhs;
+
+		rhs_next->m_prev = lhs;
+	}
+
+	void insert(Intrusive_list_node* const prev, Intrusive_list_node* const node)
+	{
+		node->m_next = prev->m_next;
+		prev->m_next = node;
+		node->m_prev = prev;
+	}
+
+	Intrusive_list_node* unlink(Intrusive_list_node* const node)
+	{
+		Intrusive_list_node* const n_prev = node->m_prev;
+		Intrusive_list_node* const n_next = node->m_next;
+
+		n_prev->m_next = n_next;
+		n_next->m_prev = n_prev;
+
+		node->m_next = &m_sentinel;
+		node->m_prev = &m_sentinel;
+
+		return n_prev;
+	}
+
+	Intrusive_list_node m_sentinel;
 };
