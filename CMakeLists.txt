@@ -31,7 +31,7 @@ set_target_properties(common_util
 
 if(${BUILD_TESTS})
 
-	add_library(gtest SHARED
+	add_library(gtest STATIC
 		/usr/src/googletest/googletest/src/gtest-all.cc
 	)
 
@@ -40,7 +40,7 @@ if(${BUILD_TESTS})
 		/usr/src/googletest/googletest/
 	)
 
-	add_library(gmock SHARED
+	add_library(gmock STATIC
 		/usr/src/googletest/googlemock/src/gmock-all.cc
 	)
 
@@ -55,7 +55,7 @@ if(${BUILD_TESTS})
 		Threads REQUIRED
 	)
 
-	add_library(common_util_tests
+	add_library(common_util_tests STATIC
 		tests/Byte_util_tests.cpp
 		tests/Insertion_sort_tests.cpp
 		tests/Test_Intrusive_list.cpp
@@ -79,6 +79,18 @@ if(${BUILD_TESTS})
 		
 		-Wl,--whole-archive common_util_tests -Wl,--no-whole-archive
 	)
+
+INSTALL(
+	TARGETS
+		common_util_test_runner_linux
+	RUNTIME DESTINATION
+		bin
+	ARCHIVE DESTINATION
+		lib
+	LIBRARY DESTINATION
+		lib
+)
+
 endif()
 
 if(DEFINED Doxygen::doxygen)
