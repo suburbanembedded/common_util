@@ -367,4 +367,49 @@ namespace
 		int ret = str_a.sprintf("%");
 		EXPECT_LT(ret, 0);
 	}
+
+	TEST(Stack_string, iterator)
+	{
+		Stack_string<16> str_a;
+		str_a.append("abcdef");
+
+		Stack_string_base::iterator_type itr = str_a.begin();
+
+		size_t i = 0;
+		while(itr != str_a.end())
+		{
+			ASSERT_EQ(*itr, str_a.data()[i]);
+			itr++;
+			i++;
+		}
+	}
+
+	TEST(Stack_string, iterator_range_for)
+	{
+		Stack_string<16> str_a;
+		str_a.append("abcdef");
+
+		size_t i = 0;
+		for(const auto& c : str_a)
+		{
+			ASSERT_EQ(c, str_a.data()[i]);
+			i++;
+		}
+	}
+
+	TEST(Stack_string, const_iterator)
+	{
+		Stack_string<16> str_a;
+		str_a.append("abcdef");
+
+		Stack_string_base::const_iterator_type itr = str_a.cbegin();
+
+		size_t i = 0;
+		while(itr != str_a.cend())
+		{
+			ASSERT_EQ(*itr, str_a.data()[i]);
+			itr++;
+			i++;
+		}
+	}
 }
