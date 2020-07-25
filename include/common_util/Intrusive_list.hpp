@@ -119,14 +119,14 @@ public:
 		using value_type = T;
 		using difference_type = std::ptrdiff_t;
 		using pointer = T*;
-		using reference = T&;
+		using reference = const T&;
 
 		const_iterator_base() : m_node_ptr(nullptr)
 		{
 			
 		}
 
-		const_iterator_base(value_type node) : m_node_ptr(node)
+		const_iterator_base(pointer node) : m_node_ptr(node)
 		{
 			
 		}
@@ -134,7 +134,7 @@ public:
 		//pointer ops
 		reference operator*() const
 		{
-			return m_node_ptr;
+			return *m_node_ptr;
 		}
 		// const value_type* operator->()  const 
 		// {
@@ -144,23 +144,23 @@ public:
 		//inc & dec
 		const_iterator_base& operator++()
 		{
-			m_node_ptr = m_node_ptr->next();
+			m_node_ptr = &((*m_node_ptr)->m_next);
 			return *this;
 		}
 		const_iterator_base operator++(int)     
 		{
-			value_type tmp = m_node_ptr;
+			pointer tmp = m_node_ptr;
 			++*this;
 			return const_iterator_base(tmp);			
 		}
 		const_iterator_base& operator--()
 		{
-			m_node_ptr = m_node_ptr->prev();
+			m_node_ptr = &((*m_node_ptr)->m_prev);
 			return *this;
 		}
 		const_iterator_base operator--(int)
 		{
-			value_type tmp = m_node_ptr;
+			pointer tmp = m_node_ptr;
 			--*this;
 			return const_iterator_base(tmp);
 		}
@@ -176,7 +176,7 @@ public:
 		}
 
 	protected:
-		value_type m_node_ptr;
+		pointer m_node_ptr;
 	};
 
 	template<typename T>
@@ -194,15 +194,15 @@ public:
 			
 		}
 
-		iterator_base(value_type node) : const_iterator_base<T>(node)
+		iterator_base(pointer node) : const_iterator_base<T>(node)
 		{
 			
 		}
 
 		//pointer ops
-		reference operator*()
+		reference operator*() const
 		{
-			return this->m_node_ptr;
+			return *this->m_node_ptr;
 		}
 		// value_type operator->() 
 		// {
@@ -212,23 +212,23 @@ public:
 		//inc & dec
 		iterator_base& operator++()
 		{
-			this->m_node_ptr = this->m_node_ptr->next();
+			this->m_node_ptr = &((*this->m_node_ptr)->m_next);
 			return *this;
 		}
 		iterator_base operator++(int)     
 		{
-			value_type tmp = this->m_node_ptr;
+			pointer tmp = this->m_node_ptr;
 			++*this;
 			return iterator_base(tmp);			
 		}
 		iterator_base& operator--()
 		{
-			this->m_node_ptr = this->m_node_ptr->prev();
+			this->m_node_ptr = &((*this->m_node_ptr)->m_prev);
 			return *this;
 		}
 		iterator_base operator--(int)
 		{
-			value_type tmp = this->m_node_ptr;
+			pointer tmp = this->m_node_ptr;
 			--*this;
 			return iterator_base(tmp);
 		}
@@ -244,8 +244,8 @@ public:
 		}
 	};
 
-	typedef iterator_base<Intrusive_list_node *> iterator_type;
-	typedef iterator_base<Intrusive_list_node const *> const_iterator_type;
+	typedef iterator_base<Intrusive_list_node*> iterator_type;
+	typedef const_iterator_base<Intrusive_list_node*> const_iterator_type;
 
 	Intrusive_list()
 	{
@@ -271,20 +271,20 @@ public:
 
 	iterator_type begin()
 	{
-		return iterator_type(m_sentinel.m_next);
+		return iterator_type(&(m_sentinel.m_next));
 	}
 	iterator_type end()
 	{
-		return iterator_type(&m_sentinel);
+		return iterator_type(&(m_sentinel.m_prev->m_next));
 	}
 
-	const_iterator_type cbegin() const
+	const_iterator_type cbegin()
 	{
-		return const_iterator_type(m_sentinel.m_next);
+		return const_iterator_type(&(m_sentinel.m_next));
 	}
-	const_iterator_type cend() const
+	const_iterator_type cend()
 	{
-		return const_iterator_type(&m_sentinel);
+		return const_iterator_type(&(m_sentinel.m_prev->m_next));
 	}
 
 	Intrusive_list_node const * const get_sentinel() const

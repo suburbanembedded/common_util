@@ -81,6 +81,9 @@ class Intrusive_slist : private Non_copyable
 {
 public:
 
+	///
+	/// Points to one behind the actual node for constant time erasure
+	///
 	template<typename T>
 	class const_iterator_base
 	{
@@ -88,8 +91,8 @@ public:
 		using iterator_category = std::forward_iterator_tag;
 		using value_type = T;
 		using difference_type = std::ptrdiff_t;
-		using pointer = T*;
-		using reference = T&;
+		using pointer = T const *;
+		using reference = const T&;
 
 		const_iterator_base() : m_ptr(nullptr)
 		{
@@ -104,7 +107,7 @@ public:
 		//pointer ops
 		reference operator*() const 
 		{
-			return *m_ptr;
+			return m_ptr;
 		}
 		// const value_type* operator->()  const 
 		// {
@@ -119,7 +122,7 @@ public:
 		}
 		const_iterator_base operator++(int)     
 		{
-			pointer tmp = m_ptr;
+			value_type tmp = m_ptr;
 			++*this;
 			return const_iterator_base(tmp);			
 		}
@@ -192,8 +195,8 @@ public:
 		}
 	};
 
-	typedef iterator_base<Intrusive_slist_node *> iterator_type;
-	typedef iterator_base<const Intrusive_slist_node *> const_iterator_type;
+	typedef iterator_base<Intrusive_slist_node*> iterator_type;
+	typedef const_iterator_base<Intrusive_slist_node*> const_iterator_type;
 
 	Intrusive_slist()
 	{
@@ -223,11 +226,11 @@ public:
 		return iterator_type(&m_sentinel);
 	}
 
-	const_iterator_type cbegin() const
+	const_iterator_type cbegin()
 	{
 		return const_iterator_type(m_sentinel.m_next);
 	}
-	const_iterator_type cend() const
+	const_iterator_type cend()
 	{
 		return const_iterator_type(&m_sentinel);
 	}
@@ -285,7 +288,18 @@ public:
 	{
 		node->m_next = m_sentinel.m_next;
 		m_sentinel.m_next = node;
+
+		// if(m_tail == &m_sentinel)
+		// {
+		// 	m_tail = node;
+		// }
 	}
+
+	// void push_back(Intrusive_slist_node* const node)
+	// {
+	// 	m_tail->m_next = node;
+	// 	node->m_next = &m_sentinel;
+	// }
 
 	void pop_front()
 	{
@@ -380,8 +394,7 @@ protected:
 		{
 			if(prev->m_next == node)
 			{
-				prev->m_next = node->m_next;
-				node->m_next = nullptr;
+				unlink_next(prev);
 				break;
 			}
 
@@ -391,11 +404,21 @@ protected:
 		return prev;
 	}
 
-	void insert(Intrusive_slist_node* const prev, Intrusive_slist_node* const node)
+	static Intrusive_slist_node* unlink_next(Intrusive_slist_node* const prev)
+	{
+		Intrusive_slist_node* node = prev->m_next;
+		prev->m_next = node->m_next;
+		node->m_next = nullptr;
+
+		return prev;
+	}
+
+	static void insert(Intrusive_slist_node* const prev, Intrusive_slist_node* const node)
 	{
 		node->m_next = prev->m_next;
 		prev->m_next = node;
 	}
 
 	Intrusive_slist_node m_sentinel;
+	// Intrusive_slist_node* m_tail;
 };
