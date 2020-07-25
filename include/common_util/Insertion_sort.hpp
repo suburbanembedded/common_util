@@ -14,17 +14,18 @@
 template<class Iter, class Comp>
 void insertion_sort(Iter begin, Iter end, Comp comp_lt)
 {
+	//using std::swap;
+
 	if(begin == end)
 	{
 		return;
 	}
 
-	Iter i = begin;
-	++i;
-	for(; i != end; ++i)
+	for(Iter i = std::next(begin); i != end; i = std::next(i))
 	{
-		for(Iter j = i; (j != begin) && comp_lt(*j, *std::prev(j)); --j)
+		for(Iter j = i; (j != begin) && comp_lt(*j, *std::prev(j)); j = std::prev(j))
 		{
+			// swap(*j, *std::prev(j));
 			std::iter_swap(j, std::prev(j));
 		}
 	}
