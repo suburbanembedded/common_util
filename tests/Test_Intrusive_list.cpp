@@ -1,4 +1,5 @@
 #include "common_util/Intrusive_list.hpp"
+#include "common_util/Insertion_sort.hpp"
 
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
@@ -85,7 +86,7 @@ namespace
 		size_t i = 0;
 		while(itr != list.end())
 		{
-			ASSERT_EQ(&(*itr), &(node_storage[i]));
+			ASSERT_EQ((*itr), &(node_storage[i]));
 			itr++;
 			i++;
 		}
@@ -104,7 +105,7 @@ namespace
 		size_t i = 0;
 		for(const auto& n : list)
 		{
-			ASSERT_EQ(&n, &(node_storage[i]));
+			ASSERT_EQ(n, &(node_storage[i]));
 			i++;
 		}
 	}
@@ -124,7 +125,7 @@ namespace
 		size_t i = 0;
 		while(itr != list.cend())
 		{
-			ASSERT_EQ(&(*itr), &(node_storage[i]));
+			ASSERT_EQ((*itr), &(node_storage[i]));
 			itr++;
 			i++;
 		}
@@ -542,5 +543,61 @@ namespace
 			EXPECT_EQ(node, &(node_storage[4]));
 			node = node->next();
 		}
+	}
+
+	class IntNode : public Intrusive_list_node
+	{
+	public:
+		~IntNode() override
+		{
+
+		}
+		int val;
+	};
+
+	TEST(Intrusive_list, sort)
+	{
+
+		std::vector<IntNode> node_storage;
+		node_storage.resize(5);
+		node_storage[0].val = 0;
+		node_storage[1].val = 1;
+		node_storage[2].val = 2;
+		node_storage[3].val = 3;
+		node_storage[4].val = 4;
+
+		Intrusive_list list;
+		list.push_back(node_storage.data() + 4);
+		list.push_back(node_storage.data() + 2);
+		list.push_back(node_storage.data() + 1);
+		list.push_back(node_storage.data() + 3);
+		list.push_back(node_storage.data() + 0);
+
+		//at some point IntNode is sliced off...
+		auto b = list.begin();
+		auto e = list.end();
+		// insertion_sort(b, e, 
+		// 	[]
+		// 	(const Intrusive_list_node* a, const Intrusive_list_node* b)
+		// 	->bool
+		// 	{
+		// 		//IntNode const * a_ptr = dynamic_cast<IntNode const *>(a);
+		// 		//IntNode const * b_ptr = dynamic_cast<IntNode const *>(b);
+		// 		//return a_ptr->val < b_ptr->val;
+		// 		return a < b;
+		// 	}
+		// );
+
+		auto node = list.front<IntNode>();
+		EXPECT_EQ(0, node->val);
+		node = node->next<IntNode>();
+		EXPECT_EQ(1, node->val);
+		node = node->next<IntNode>();
+		EXPECT_EQ(2, node->val);
+		node = node->next<IntNode>();
+		EXPECT_EQ(3, node->val);
+		node = node->next<IntNode>();
+		EXPECT_EQ(4, node->val);
+		node = node->next<IntNode>();
 	}
 }

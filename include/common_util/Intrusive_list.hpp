@@ -30,7 +30,10 @@ public:
 		m_next = nullptr;
 	}
 
-	~Intrusive_list_node() = default;
+	virtual ~Intrusive_list_node()
+	{
+
+	}
 
 	//copy & assign are default
 	Intrusive_list_node(const Intrusive_list_node& rhs) = default;
@@ -109,7 +112,7 @@ class Intrusive_list : private Non_copyable
 public:
 
 	template<typename T>
-	class iterator_base
+	class const_iterator_base
 	{
 	public:
 		using iterator_category = std::bidirectional_iterator_tag;
@@ -118,66 +121,131 @@ public:
 		using pointer = T*;
 		using reference = T&;
 
-		iterator_base() : m_ptr(nullptr)
+		const_iterator_base() : m_node_ptr(nullptr)
 		{
 			
 		}
 
-		iterator_base(pointer ptr) : m_ptr(ptr)
+		const_iterator_base(value_type node) : m_node_ptr(node)
 		{
 			
 		}
 
 		//pointer ops
-		reference operator*() const 
+		reference operator*() const
 		{
-			return *m_ptr;
+			return m_node_ptr;
 		}
-		const value_type* operator->()  const 
+		// const value_type* operator->()  const 
+		// {
+		// 	return &m_node_ptr;
+		// }
+
+		//inc & dec
+		const_iterator_base& operator++()
 		{
-			return m_ptr;
+			m_node_ptr = m_node_ptr->next();
+			return *this;
 		}
+		const_iterator_base operator++(int)     
+		{
+			value_type tmp = m_node_ptr;
+			++*this;
+			return const_iterator_base(tmp);			
+		}
+		const_iterator_base& operator--()
+		{
+			m_node_ptr = m_node_ptr->prev();
+			return *this;
+		}
+		const_iterator_base operator--(int)
+		{
+			value_type tmp = m_node_ptr;
+			--*this;
+			return const_iterator_base(tmp);
+		}
+
+		//comparison
+		bool operator== (const const_iterator_base& rhs) const
+		{
+			return m_node_ptr == rhs.m_node_ptr;
+		}
+		bool operator!= (const const_iterator_base& rhs) const
+		{
+			return m_node_ptr != rhs.m_node_ptr;
+		}
+
+	protected:
+		value_type m_node_ptr;
+	};
+
+	template<typename T>
+	class iterator_base : public const_iterator_base< T >
+	{
+	public:
+		using iterator_category = std::bidirectional_iterator_tag;
+		using value_type = T;
+		using difference_type = std::ptrdiff_t;
+		using pointer = T*;
+		using reference = T&;
+
+		iterator_base()
+		{
+			
+		}
+
+		iterator_base(value_type node) : const_iterator_base<T>(node)
+		{
+			
+		}
+
+		//pointer ops
+		reference operator*()
+		{
+			return this->m_node_ptr;
+		}
+		// value_type operator->() 
+		// {
+		// 	return this->m_node_ptr;
+		// }
 
 		//inc & dec
 		iterator_base& operator++()
 		{
-			m_ptr = m_ptr->next();
+			this->m_node_ptr = this->m_node_ptr->next();
 			return *this;
 		}
 		iterator_base operator++(int)     
 		{
-			pointer tmp = m_ptr;
+			value_type tmp = this->m_node_ptr;
 			++*this;
 			return iterator_base(tmp);			
 		}
 		iterator_base& operator--()
 		{
-			m_ptr = m_ptr->prev();
+			this->m_node_ptr = this->m_node_ptr->prev();
 			return *this;
 		}
 		iterator_base operator--(int)
 		{
-			pointer tmp = m_ptr;
+			value_type tmp = this->m_node_ptr;
 			--*this;
 			return iterator_base(tmp);
 		}
 
 		//comparison
-		bool operator== (const iterator_base& rhs)  const
+		bool operator== (const iterator_base& rhs) const
 		{
-			return m_ptr == rhs.m_ptr;
+			return this->m_node_ptr == rhs.m_node_ptr;
 		}
-		bool operator!= (const iterator_base& rhs)  const
+		bool operator!= (const iterator_base& rhs) const
 		{
-			return m_ptr != rhs.m_ptr;
+			return this->m_node_ptr != rhs.m_node_ptr;
 		}
-
-	protected:
-		pointer m_ptr;
 	};
 
-	typedef iterator_base<Intrusive_list_node> iterator_type;
-	typedef iterator_base<const Intrusive_list_node> const_iterator_type;
+	typedef iterator_base<Intrusive_list_node *> iterator_type;
+	typedef iterator_base<Intrusive_list_node const *> const_iterator_type;
 
 	Intrusive_list()
 	{
@@ -340,30 +408,12 @@ public:
 		return ret;
 	}
 
-	bool erase(Intrusive_list_node* const node)
+	void erase(Intrusive_list_node* const node)
 	{
-		if(empty())
-		{
-			return false;
-		}
-
-		Intrusive_list_node* curr = m_sentinel.m_next;
-
-		while(curr != &m_sentinel)
-		{
-			if(curr == node)
-			{
-				unlink(curr);
-				return true;
-			}
-
-			curr = curr->m_next;
-		}
-
-		return false;
+		unlink(node);
 	}
 
-	void swap(Intrusive_list_node* const a, Intrusive_list_node* const b)
+	static void swap(Intrusive_list_node* const a, Intrusive_list_node* const b)
 	{
 		if(a == b)
 		{
@@ -386,29 +436,17 @@ public:
 		}
 		else
 		{
-			Intrusive_list_node* const a_prev = a->m_prev;
-			Intrusive_list_node* const a_next = a->m_next;
+			Intrusive_list_node* a_prev = unlink(a);
+			Intrusive_list_node* b_prev = unlink(b);
 
-			Intrusive_list_node* const b_prev = b->m_prev;
-			Intrusive_list_node* const b_next = b->m_next;
-
-			a_prev->m_next = b;
-			a_next->m_prev = b;
-
-			b_prev->m_next = a;
-			b_next->m_prev = a;
-			
-			b->m_prev = a_prev;
-			b->m_next = a_next;
-			
-			a->m_prev = b_prev;
-			a->m_next = b_next;
+			insert(a_prev, b);
+			insert(b_prev, a);
 		}
 	}
 
 protected:
 
-	void swap_adjacent(Intrusive_list_node* const lhs, Intrusive_list_node* const rhs)
+	static void swap_adjacent(Intrusive_list_node* const lhs, Intrusive_list_node* const rhs)
 	{
 		Intrusive_list_node* const lhs_prev = lhs->m_prev;
 		Intrusive_list_node* const rhs_next = rhs->m_next;
@@ -424,14 +462,14 @@ protected:
 		rhs_next->m_prev = lhs;
 	}
 
-	void insert(Intrusive_list_node* const prev, Intrusive_list_node* const node)
+	static void insert(Intrusive_list_node* const prev, Intrusive_list_node* const node)
 	{
 		node->m_next = prev->m_next;
 		prev->m_next = node;
 		node->m_prev = prev;
 	}
 
-	Intrusive_list_node* unlink(Intrusive_list_node* const node)
+	static Intrusive_list_node* unlink(Intrusive_list_node* const node)
 	{
 		Intrusive_list_node* const n_prev = node->m_prev;
 		Intrusive_list_node* const n_next = node->m_next;
@@ -439,11 +477,16 @@ protected:
 		n_prev->m_next = n_next;
 		n_next->m_prev = n_prev;
 
-		node->m_next = &m_sentinel;
-		node->m_prev = &m_sentinel;
+		node->m_next = nullptr;
+		node->m_prev = nullptr;
 
 		return n_prev;
 	}
 
 	Intrusive_list_node m_sentinel;
 };
+
+void swap(Intrusive_list_node* const a, Intrusive_list_node* const b)
+{
+	Intrusive_list::swap(a, b);
+}

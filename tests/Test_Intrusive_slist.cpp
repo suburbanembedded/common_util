@@ -167,7 +167,7 @@ namespace
 		size_t i = 0;
 		while(itr != slist.end())
 		{
-			ASSERT_EQ(&(*itr), &(node_storage[i]));
+			ASSERT_EQ((*itr), &(node_storage[i]));
 			itr++;
 			i++;
 		}
@@ -186,7 +186,7 @@ namespace
 		size_t i = 0;
 		for(const auto& n : slist)
 		{
-			ASSERT_EQ(&n, &(node_storage[i]));
+			ASSERT_EQ(n, &(node_storage[i]));
 			i++;
 		}
 	}
@@ -206,7 +206,7 @@ namespace
 		size_t i = 0;
 		while(itr != slist.cend())
 		{
-			ASSERT_EQ(&(*itr), &(node_storage[i]));
+			ASSERT_EQ((*itr), &(node_storage[i]));
 			itr++;
 			i++;
 		}

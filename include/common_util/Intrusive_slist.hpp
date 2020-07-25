@@ -29,7 +29,10 @@ public:
 		m_next = nullptr;
 	}
 
-	~Intrusive_slist_node() = default;
+	virtual ~Intrusive_slist_node()
+	{
+		
+	}
 
 	//copy & assign are default
 	Intrusive_slist_node(const Intrusive_slist_node& rhs) = default;
@@ -78,8 +81,8 @@ class Intrusive_slist : private Non_copyable
 {
 public:
 
-template<typename T>
-	class iterator_base
+	template<typename T>
+	class const_iterator_base
 	{
 	public:
 		using iterator_category = std::forward_iterator_tag;
@@ -88,12 +91,12 @@ template<typename T>
 		using pointer = T*;
 		using reference = T&;
 
-		iterator_base() : m_ptr(nullptr)
+		const_iterator_base() : m_ptr(nullptr)
 		{
 			
 		}
 
-		iterator_base(pointer ptr) : m_ptr(ptr)
+		const_iterator_base(value_type ptr) : m_ptr(ptr)
 		{
 			
 		}
@@ -103,20 +106,77 @@ template<typename T>
 		{
 			return *m_ptr;
 		}
-		const value_type* operator->()  const 
-		{
-			return m_ptr;
-		}
+		// const value_type* operator->()  const 
+		// {
+		// 	return m_ptr;
+		// }
 
 		//inc & dec
-		iterator_base& operator++()
+		const_iterator_base& operator++()
 		{
 			m_ptr = m_ptr->next();
 			return *this;
 		}
-		iterator_base operator++(int)     
+		const_iterator_base operator++(int)     
 		{
 			pointer tmp = m_ptr;
+			++*this;
+			return const_iterator_base(tmp);			
+		}
+
+		//comparison
+		bool operator== (const const_iterator_base& rhs) const
+		{
+			return m_ptr == rhs.m_ptr;
+		}
+		bool operator!= (const const_iterator_base& rhs) const
+		{
+			return m_ptr != rhs.m_ptr;
+		}
+
+	protected:
+		value_type m_ptr;
+	};
+
+	template<typename T>
+	class iterator_base : public const_iterator_base< T >
+	{
+	public:
+		using iterator_category = std::forward_iterator_tag;
+		using value_type = T;
+		using difference_type = std::ptrdiff_t;
+		using pointer = T*;
+		using reference = T&;
+
+		iterator_base()
+		{
+			
+		}
+
+		iterator_base(value_type ptr) : const_iterator_base<T>(ptr)
+		{
+			
+		}
+
+		//pointer ops
+		reference operator*() 
+		{
+			return this->m_ptr;
+		}
+		// const value_type* operator->()  const 
+		// {
+		// 	return m_ptr;
+		// }
+
+		//inc & dec
+		iterator_base& operator++()
+		{
+			this->m_ptr = this->m_ptr->next();
+			return *this;
+		}
+		iterator_base operator++(int)     
+		{
+			value_type tmp = this->m_ptr;
 			++*this;
 			return iterator_base(tmp);			
 		}
@@ -124,19 +184,16 @@ template<typename T>
 		//comparison
 		bool operator== (const iterator_base& rhs)  const
 		{
-			return m_ptr == rhs.m_ptr;
+			return this->m_ptr == rhs.m_ptr;
 		}
 		bool operator!= (const iterator_base& rhs)  const
 		{
-			return m_ptr != rhs.m_ptr;
+			return this->m_ptr != rhs.m_ptr;
 		}
-
-	protected:
-		pointer m_ptr;
 	};
 
-	typedef iterator_base<Intrusive_slist_node> iterator_type;
-	typedef iterator_base<const Intrusive_slist_node> const_iterator_type;
+	typedef iterator_base<Intrusive_slist_node *> iterator_type;
+	typedef iterator_base<const Intrusive_slist_node *> const_iterator_type;
 
 	Intrusive_slist()
 	{
@@ -241,30 +298,7 @@ template<typename T>
 
 	bool erase(Intrusive_slist_node* const node)
 	{
-		if(empty())
-		{
-			return false;
-		}
-
-		Intrusive_slist_node* prev = &m_sentinel;
-		Intrusive_slist_node* curr = m_sentinel.m_next;
-		Intrusive_slist_node* next = curr->m_next;
-
-		while(curr != &m_sentinel)
-		{
-			if(curr == node)
-			{
-				prev->m_next = next;
-				node->m_next = &m_sentinel;
-				return true;
-			}
-
-			prev = curr;
-			curr = curr->m_next;
-			next = curr->m_next;
-		}
-
-		return false;
+		return unlink(node);
 	}
 
 	static bool is_node_adj(Intrusive_slist_node* const a, Intrusive_slist_node* const b)
@@ -315,7 +349,6 @@ template<typename T>
 		}
 	}
 
-
 protected:
 
 	bool swap_adjacent(Intrusive_slist_node* const lhs, Intrusive_slist_node* const rhs)
@@ -348,7 +381,7 @@ protected:
 			if(prev->m_next == node)
 			{
 				prev->m_next = node->m_next;
-				node->m_next = &m_sentinel;
+				node->m_next = nullptr;
 				break;
 			}
 
