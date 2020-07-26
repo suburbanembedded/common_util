@@ -83,13 +83,13 @@ namespace
 
 		Intrusive_list::iterator_type itr = list.begin();
 
-		size_t i = 0;
-		while(itr != list.end())
+		for(size_t i = 0; i < 3; i++)
 		{
+			ASSERT_NE(itr, list.end());
 			ASSERT_EQ((*itr), &(node_storage[i]));
 			itr++;
-			i++;
 		}
+		ASSERT_EQ(itr, list.end());
 	}
 
 	TEST(Intrusive_list, iterator_range_for)
@@ -108,6 +108,7 @@ namespace
 			ASSERT_EQ(n, &(node_storage[i]));
 			i++;
 		}
+		ASSERT_EQ(i, 3);
 	}
 
 	TEST(Intrusive_list, const_iterator)
@@ -122,13 +123,13 @@ namespace
 
 		Intrusive_list::const_iterator_type itr = list.cbegin();
 
-		size_t i = 0;
-		while(itr != list.cend())
+		for(size_t i = 0; i < 3; i++)
 		{
+			ASSERT_NE(itr, list.cend());
 			ASSERT_EQ((*itr), &(node_storage[i]));
 			itr++;
-			i++;
 		}
+		ASSERT_EQ(itr, list.cend());
 	}
 
 	TEST(Intrusive_list, erase_last)
@@ -588,15 +589,15 @@ namespace
 		);
 
 		auto node = list.front<IntNode>();
-		EXPECT_EQ(0, node->val);
+		EXPECT_EQ(-1, node->val);
 		node = node->next<IntNode>();
-		EXPECT_EQ(1, node->val);
+		EXPECT_EQ(-1, node->val);
 		node = node->next<IntNode>();
-		EXPECT_EQ(2, node->val);
+		EXPECT_EQ(-1, node->val);
 		node = node->next<IntNode>();
-		EXPECT_EQ(3, node->val);
+		EXPECT_EQ(-1, node->val);
 		node = node->next<IntNode>();
-		EXPECT_EQ(4, node->val);
+		EXPECT_EQ(-1, node->val);
 		node = node->next<IntNode>();
 	}
 }

@@ -164,13 +164,13 @@ namespace
 
 		Intrusive_slist::iterator_type itr = slist.begin();
 
-		size_t i = 0;
-		while(itr != slist.end())
+		for(size_t i = 0; i < 3; i++)
 		{
+			ASSERT_NE(itr, slist.end());
 			ASSERT_EQ((*itr), &(node_storage[i]));
 			itr++;
-			i++;
 		}
+		ASSERT_EQ(itr, slist.end());
 	}
 
 	TEST(Intrusive_slist, iterator_range_for)
@@ -189,6 +189,7 @@ namespace
 			ASSERT_EQ(n, &(node_storage[i]));
 			i++;
 		}
+		ASSERT_EQ(i, 3);
 	}
 
 	TEST(Intrusive_slist, const_iterator)
@@ -203,13 +204,13 @@ namespace
 
 		Intrusive_slist::const_iterator_type itr = slist.cbegin();
 
-		size_t i = 0;
-		while(itr != slist.cend())
+		for(size_t i = 0; i < 3; i++)
 		{
+			ASSERT_NE(itr, slist.cend());
 			ASSERT_EQ((*itr), &(node_storage[i]));
 			itr++;
-			i++;
 		}
+		ASSERT_EQ(itr, slist.cend());
 	}
 
 	TEST(Intrusive_slist, swap_0_1)
