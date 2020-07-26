@@ -576,17 +576,16 @@ namespace
 		//at some point IntNode is sliced off...
 		auto b = list.begin();
 		auto e = list.end();
-		// insertion_sort(b, e, 
-		// 	[]
-		// 	(const Intrusive_list_node* a, const Intrusive_list_node* b)
-		// 	->bool
-		// 	{
-		// 		//IntNode const * a_ptr = dynamic_cast<IntNode const *>(a);
-		// 		//IntNode const * b_ptr = dynamic_cast<IntNode const *>(b);
-		// 		//return a_ptr->val < b_ptr->val;
-		// 		return a < b;
-		// 	}
-		// );
+		insertion_sort(b, e, 
+			[]
+			(const Intrusive_list_node* a, const Intrusive_list_node* b)
+			->bool
+			{
+				IntNode const * a_ptr = dynamic_cast<IntNode const *>(a);
+				IntNode const * b_ptr = dynamic_cast<IntNode const *>(b);
+				return a_ptr->val < b_ptr->val;
+			}
+		);
 
 		auto node = list.front<IntNode>();
 		EXPECT_EQ(0, node->val);
