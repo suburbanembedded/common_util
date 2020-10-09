@@ -1,3 +1,5 @@
+project(common_util)
+
 cmake_minimum_required(VERSION 3.10)
 
 add_library(common_util
@@ -15,8 +17,16 @@ add_library(common_util
 	src/Stack_string.cpp
 )
 
+file(GLOB common_util_PUBLIC_HEADER	include/common_util/*.hpp)
+
 target_include_directories(common_util PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+set_target_properties(common_util
+	PROPERTIES
+		PUBLIC_HEADER
+			"${common_util_PUBLIC_HEADER}"
 )
 
 if(${BUILD_TESTS})
@@ -77,3 +87,24 @@ if(DEFINED Doxygen::doxygen)
 		src/
 	)
 endif()
+
+INSTALL(
+	TARGETS
+		common_util
+	ARCHIVE DESTINATION
+		lib
+	LIBRARY DESTINATION
+		lib
+	PUBLIC_HEADER DESTINATION 
+		include/common_util
+)
+
+SET(CPACK_GENERATOR "DEB")
+SET(CPACK_PACKAGE_VERSION_MAJOR "0")
+SET(CPACK_PACKAGE_VERSION_MINOR "1")
+SET(CPACK_PACKAGE_VERSION_PATCH "0")
+SET(CPACK_PACKAGE_VENDOR  "Jacob Schloss")
+SET(CPACK_PACKAGE_CONTACT "jacob@schloss.io")
+SET(CPACK_DEBIAN_PACKAGE_SECTION "non-free/misc")
+SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6, libstdc++6, libgcc1")
+INCLUDE(CPack)
