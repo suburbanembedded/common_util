@@ -22,6 +22,13 @@ public:
 		set_buffer(m_buf.data(), m_buf.size());
 	}
 
+	static constexpr size_t max_len()
+	{
+		return LEN;
+	}
+
 private:
+
+
 	std::array<char, LEN+1> m_buf;
 };
