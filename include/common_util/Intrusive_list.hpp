@@ -327,6 +327,7 @@ public:
 			else
 			{
 				m_head = m_head->m_next;
+				m_head->m_prev = nullptr;
 			}
 		}
 	}
