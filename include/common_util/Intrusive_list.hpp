@@ -343,6 +343,7 @@ public:
 			else
 			{
 				m_tail = m_tail->m_prev;
+				m_tail->m_next = nullptr;
 			}
 		}
 	}
