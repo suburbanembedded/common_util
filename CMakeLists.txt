@@ -49,6 +49,10 @@ if(${BUILD_TESTS})
 		/usr/src/googletest/googlemock/
 	)
 
+	target_link_libraries(gmock 
+		gtest
+	)
+
 	set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 	set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 	find_package(
