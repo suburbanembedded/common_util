@@ -58,7 +58,7 @@ namespace
 			node = node->next();
 		}
 	}
-
+#if 0
 	TEST(Intrusive_slist, erase_last)
 	{
 		std::vector<Intrusive_slist_node> node_storage;
@@ -124,7 +124,7 @@ namespace
 		ASSERT_EQ(front, &(node_storage[1]));
 		ASSERT_EQ(front->next<Intrusive_slist_node>(), &(node_storage[0]));
 	}
-
+#endif
 	TEST(Intrusive_slist, pop_front)
 	{
 		std::vector<Intrusive_slist_node> node_storage;
@@ -211,7 +211,7 @@ namespace
 			i++;
 		}
 	}
-
+#if 0
 	TEST(Intrusive_slist, swap_0_1)
 	{
 		std::vector<Intrusive_slist_node> node_storage;
@@ -505,4 +505,5 @@ namespace
 			node = node->next();
 		}
 	}
+#endif
 }
