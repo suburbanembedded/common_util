@@ -85,10 +85,10 @@ public:
 		c[1] = nibble_hex_lut[ get_n0(n) ];
 	}
 
-	static void u8_to_hex_str(const uint8_t n, std::array<char, 3>* const str)
+	static void u16_to_hex(const uint32_t n, char c[4])
 	{
-		u8_to_hex(n, str->data());
-		str->back() = '\0';
+		u8_to_hex(Byte_util::get_b1(n), c + 0);
+		u8_to_hex(Byte_util::get_b0(n), c + 2);
 	}
 
 	static void u32_to_hex(const uint32_t n, char c[8])
@@ -111,10 +111,71 @@ public:
 		u8_to_hex(Byte_util::get_b0(n), c + 14);
 	}
 
-	static void u32_to_hex_str(const uint32_t n, std::array<char, 8>* const str)
+	static void u8_to_hex_str(const uint8_t n, std::array<char, 3>* const out_str)
 	{
-		u32_to_hex(n, str->data());
-		str->back() = '\0';
+		u8_to_hex(n, out_str->data());
+		out_str->back() = '\0';
+	}
+	static void u16_to_hex_str(const uint16_t n, std::array<char, 5>* const out_str)
+	{
+		u16_to_hex(n, out_str->data());
+		out_str->back() = '\0';
+	}
+	static void u32_to_hex_str(const uint32_t n, std::array<char, 9>* const out_str)
+	{
+		u32_to_hex(n, out_str->data());
+		out_str->back() = '\0';
+	}
+	static void u64_to_hex_str(const uint64_t n, std::array<char, 17>* const out_str)
+	{
+		u64_to_hex(n, out_str->data());
+		out_str->back() = '\0';
+	}
+
+	static bool hex_str_to_u8(const std::array<char, 3>& str, uint8_t* const out_n)
+	{
+		return hex_to_byte(str.data(), out_n);
+	}
+
+	template <typename T>
+	static bool hex_str_to_uT(const std::array<char, sizeof(T)*2+1>& str, T* const out_n)
+	{
+		T temp = 0;
+
+		char const* str_ptr = str.data();
+
+		for(size_t i = 0; i < sizeof(T); i++)
+		{
+			uint8_t b = 0;
+			if(!hex_to_byte(str_ptr, &b))
+			{
+				return false;
+			}
+
+			str_ptr += 2;
+
+			temp <<= 8;
+			temp |= b;
+		}
+
+		*out_n = temp;
+
+		return true;
+	}
+
+	static bool hex_str_to_u16(const std::array<char, 5>& str, uint16_t* const out_n)
+	{
+		return hex_str_to_uT<uint16_t>(str, out_n);
+	}
+
+	static bool hex_str_to_u32(const std::array<char, 9>& str, uint32_t* const out_n)
+	{
+		return hex_str_to_uT<uint32_t>(str, out_n);
+	}
+
+	static bool hex_str_to_u64(const std::array<char, 17>& str, uint64_t* const out_n)
+	{
+		return hex_str_to_uT<uint64_t>(str, out_n);
 	}
 
 	static constexpr char ascii_to_upper(const char c)
