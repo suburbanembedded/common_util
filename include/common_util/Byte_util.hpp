@@ -9,6 +9,7 @@
 
 #include <array>
 #include <cstdint>
+#include <cstddef>
 
 class Byte_util
 {
