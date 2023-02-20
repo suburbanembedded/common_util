@@ -32,3 +32,9 @@ private:
 
 	std::array<char, LEN+1> m_buf;
 };
+
+typedef Stack_string<16> Stack_string_16;
+typedef Stack_string<32> Stack_string_32;
+typedef Stack_string<64> Stack_string_64;
+typedef Stack_string<128> Stack_string_128;
+typedef Stack_string<256> Stack_string_256;
