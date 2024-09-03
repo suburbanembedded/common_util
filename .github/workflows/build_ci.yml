@@ -70,7 +70,7 @@ jobs:
 
     steps:
     - name: Get installer
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4.1.7
       with:
         name: common_util-release
     - name: Unpack common_util
@@ -95,7 +95,7 @@ jobs:
     
     steps:
     - name: Get artifact
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4.1.7
       with:
         name: hadoucan-fw-release
         path: ${{ github.workspace }}/common_util-${{ github.sha }}.tar.gz
