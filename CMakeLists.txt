@@ -29,72 +29,74 @@ set_target_properties(common_util
 			"${common_util_PUBLIC_HEADER}"
 )
 
-if(${BUILD_TESTS})
+if(NOT (CMAKE_SYSTEM_NAME MATCHES Generic))
 
-	add_library(gtest STATIC
-		/usr/src/googletest/googletest/src/gtest-all.cc
+	if(${BUILD_TESTS})
+
+		add_library(gtest STATIC
+			/usr/src/googletest/googletest/src/gtest-all.cc
+		)
+
+		target_include_directories(gtest PUBLIC
+			/usr/src/googletest/googletest/include
+			/usr/src/googletest/googletest/
+		)
+
+		add_library(gmock STATIC
+			/usr/src/googletest/googlemock/src/gmock-all.cc
+		)
+
+		target_include_directories(gmock PUBLIC
+			/usr/src/googletest/googlemock/include
+			/usr/src/googletest/googlemock/
+		)
+
+		target_link_libraries(gmock 
+			gtest
+		)
+
+		set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+		set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+		find_package(
+			Threads REQUIRED
+		)
+
+		add_library(common_util_tests STATIC
+			tests/Byte_util_tests.cpp
+			tests/Insertion_sort_tests.cpp
+			tests/Test_Intrusive_list.cpp
+			tests/Test_Intrusive_slist.cpp
+			tests/Test_Stack_string.cpp
+		)
+
+		target_link_libraries(common_util_tests 
+			common_util
+			gtest
+			gmock
+
+			Threads::Threads
+		)
+
+		add_executable(common_util_test_runner_linux
+			/usr/src/googletest/googletest/src/gtest_main.cc
+		)
+
+		target_link_libraries(common_util_test_runner_linux 
+			
+			-Wl,--whole-archive common_util_tests -Wl,--no-whole-archive
+		)
+
+	INSTALL(
+		TARGETS
+			common_util_test_runner_linux
+		RUNTIME DESTINATION
+			bin
+		ARCHIVE DESTINATION
+			lib
+		LIBRARY DESTINATION
+			lib
 	)
-
-	target_include_directories(gtest PUBLIC
-		/usr/src/googletest/googletest/include
-		/usr/src/googletest/googletest/
-	)
-
-	add_library(gmock STATIC
-		/usr/src/googletest/googlemock/src/gmock-all.cc
-	)
-
-	target_include_directories(gmock PUBLIC
-		/usr/src/googletest/googlemock/include
-		/usr/src/googletest/googlemock/
-	)
-
-	target_link_libraries(gmock 
-		gtest
-	)
-
-	set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-	set(THREADS_PREFER_PTHREAD_FLAG TRUE)
-	find_package(
-		Threads REQUIRED
-	)
-
-	add_library(common_util_tests STATIC
-		tests/Byte_util_tests.cpp
-		tests/Insertion_sort_tests.cpp
-		tests/Test_Intrusive_list.cpp
-		tests/Test_Intrusive_slist.cpp
-		tests/Test_Stack_string.cpp
-	)
-
-	target_link_libraries(common_util_tests 
-		common_util
-		gtest
-		gmock
-
-		Threads::Threads
-	)
-
-	add_executable(common_util_test_runner_linux
-		/usr/src/googletest/googletest/src/gtest_main.cc
-	)
-
-	target_link_libraries(common_util_test_runner_linux 
-		
-		-Wl,--whole-archive common_util_tests -Wl,--no-whole-archive
-	)
-
-INSTALL(
-	TARGETS
-		common_util_test_runner_linux
-	RUNTIME DESTINATION
-		bin
-	ARCHIVE DESTINATION
-		lib
-	LIBRARY DESTINATION
-		lib
-)
-
+	endif()
 endif()
 
 if(DEFINED Doxygen::doxygen)
